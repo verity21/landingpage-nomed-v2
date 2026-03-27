@@ -1,34 +1,79 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Marquee animation */
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
+.marquee-track {
+    animation: marquee 18s linear infinite;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+    width: max-content;
 }
 
-.App-link {
-    color: #61dafb;
+.marquee-track:hover {
+    animation-play-state: paused;
 }
 
-@keyframes App-logo-spin {
+/* Gradient text */
+.gradient-text {
+    background: linear-gradient(135deg, #fc5e5f, #e8902f, #009ee7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Card hover lift */
+.card-lift {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 59, 114, 0.12);
+}
+
+/* Section fade-in on scroll */
+@keyframes fadeInUp {
     from {
-        transform: rotate(0deg);
+        opacity: 0;
+        transform: translateY(24px);
     }
     to {
-        transform: rotate(360deg);
+        opacity: 1;
+        transform: translateY(0);
     }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease both;
+}
+
+/* Glow effect */
+.glow-coral {
+    box-shadow: 0 0 30px rgba(252, 94, 95, 0.3);
+}
+.glow-blue {
+    box-shadow: 0 0 30px rgba(0, 158, 231, 0.3);
+}
+
+/* Floating animation */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+.float-anim {
+    animation: float 4s ease-in-out infinite;
+}
+
+.float-anim-delay {
+    animation: float 4s ease-in-out infinite 1s;
+}
+
+.float-anim-delay-2 {
+    animation: float 4s ease-in-out infinite 2s;
 }
