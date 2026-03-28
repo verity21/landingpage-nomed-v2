@@ -48,7 +48,7 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-xs uppercase tracking-widest text-white/40 mb-4">Empresa</h4>
             <ul className="flex flex-col gap-3">
-              {[{ label: "Nosotros", to: "/nosotros" }, { label: "Equipo", to: "/equipo" }, { label: "Estudiantes Digitales", to: "/estudiantes-digitales" }, { label: "¿Qué producto necesito?", to: "/que-producto-necesito" }].map((item) => (
+              {[{ label: "Inicio", to: "/" }, { label: "Equipo", to: "/equipo" }, { label: "Estudiantes Digitales", to: "/estudiantes-digitales" }, { label: "¿Qué producto necesito?", to: "/#quiz" }].map((item) => (
                 <li key={item.label}><Link to={item.to} className="text-sm text-white/60 hover:text-white transition-colors">{item.label}</Link></li>
               ))}
               <li><a href="mailto:contacto@nomed.org" className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1" data-testid="footer-email"><Mail size={12} /> contacto@nomed.org</a></li>

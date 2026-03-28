@@ -1,5 +1,5 @@
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DemoProvider } from "@/contexts/DemoContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import Navbar from "@/components/Navbar";
@@ -25,6 +25,9 @@ function App() {
               <Route path="/tecnologia" element={<TecnologiaPage />} />
               <Route path="/productos" element={<ProductosPage />} />
               <Route path="/estudiantes-digitales" element={<EstudiantesDigitalesPage />} />
+              <Route path="/nosotros" element={<Navigate to="/equipo" replace />} />
+              <Route path="/que-producto-necesito" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
           <Footer />

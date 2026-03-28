@@ -70,6 +70,14 @@ Diseño web completo para Nomed, empresa de tecnología con IA con sede en Santi
 - ProductQuiz.jsx como componente reutilizable
 - Tests: Backend 100%, Frontend 100% (14/14)
 
+### Iteración 3 (Feb 2026) — Paleta ED + Anclas + Limpieza routing
+- EstudiantesDigitalesPage: paleta exacta (#2B7F87, #65B4B8, #CEE5D1, #F3EEEC, #FF7878), badge "Nuestras ED Tech", H1 sin "Nomed &"
+- Anclas id="ed-master/ed-teach/ed-math" y id="botbee/cert/blog" funcionales
+- Navbar: "Equipo" en lugar de "Nosotros" ✓ | Timeline "Cómo trabajamos" ✓ | Banderas de países ✓
+- App.js: rutas /nosotros → redirect a /equipo, /que-producto-necesito → /, catch-all → /
+- Footer: links "Nosotros" → "Inicio", "¿Qué producto necesito?" → /#quiz
+- Tests: Frontend 93% → 100% después de fix de redirects
+
 ---
 
 ## Backlog Priorizado
@@ -77,7 +85,6 @@ Diseño web completo para Nomed, empresa de tecnología con IA con sede en Santi
 ### P0 — Pendiente
 - [ ] Imagen de Federica Morici (actualmente usa avatar FM)
 - [ ] Logos de partners SPDA y DICAPI para el marquee
-- [ ] Colores exactos de Estudiantes Digitales (imagen pendiente de usuario)
 
 ### P1 — Próximas mejoras
 - [ ] SEO: meta tags, Open Graph, sitemap
