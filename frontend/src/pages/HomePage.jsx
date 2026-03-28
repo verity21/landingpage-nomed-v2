@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useDemo } from "@/contexts/DemoContext";
 import ProductQuiz from "@/components/ProductQuiz";
 import axios from "axios";
 import {
-  BrainCircuit, Package, GraduationCap, ArrowRight, Sparkles, Globe,
+  BrainCircuit, Package, GraduationCap, ArrowRight, Sparkles,
   CheckCircle, Target, Eye, Search, Layout, Code, Headphones,
-  Bot, Award, PenSquare, BookOpen, Calculator, Trophy, MapPin,
+  Bot, Award, PenSquare, BookOpen, Calculator, Trophy,
 } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-/* ---------- HERO ---------- */
+/* ---- HERO ---- */
 function HeroSection({ openDemo }) {
   return (
     <section className="pt-28 pb-20 bg-white overflow-hidden relative" id="inicio">
@@ -39,18 +39,23 @@ function HeroSection({ openDemo }) {
               <Link to="/tecnologia" className="px-7 py-3.5 border-2 border-[#003b72] text-[#003b72] rounded-full font-semibold hover:bg-[#003b72] hover:text-white transition-all" data-testid="hero-services-btn">
                 Ver servicios
               </Link>
-              <Link to="/estudiantes-digitales" className="px-7 py-3.5 text-[#e8902f] font-semibold flex items-center gap-1.5 hover:gap-2.5 transition-all" data-testid="hero-ed-btn">
-                Alianza ED <ArrowRight size={16} />
-              </Link>
             </div>
-            <div className="flex items-center gap-3 text-sm text-gray-400">
-              <Globe size={14} />
+            {/* Countries with flags */}
+            <div className="flex items-center gap-3 text-sm text-gray-400 flex-wrap">
               <span>Presencia en</span>
-              {["Chile", "México", "Perú", "Argentina"].map((c) => (
-                <span key={c} className="text-[#003b72] font-medium">{c}</span>
+              {[
+                { country: "Chile", flag: "🇨🇱" },
+                { country: "México", flag: "🇲🇽" },
+                { country: "Perú", flag: "🇵🇪" },
+                { country: "Argentina", flag: "🇦🇷" },
+              ].map((c) => (
+                <span key={c.country} className="flex items-center gap-1 text-[#003b72] font-medium">
+                  <span>{c.flag}</span> {c.country}
+                </span>
               ))}
             </div>
           </div>
+          {/* Floating product cards */}
           <div className="hidden lg:flex justify-center items-center">
             <div className="relative w-full max-w-sm">
               <div className="card-lift float-anim bg-white border border-gray-100 rounded-2xl p-6 shadow-xl mb-4">
@@ -75,7 +80,7 @@ function HeroSection({ openDemo }) {
                 <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: "#e8902f15" }}>
                   <GraduationCap size={22} color="#e8902f" />
                 </div>
-                <h3 className="font-bold text-[#003b72] text-lg">Alianza EdTech</h3>
+                <h3 className="font-bold text-[#003b72] text-lg">Estudiantes Digitales</h3>
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {["ED Teach", "ED Math", "ED Master"].map((p) => (
                     <span key={p} className="text-xs bg-[#e8902f]/10 text-[#e8902f] px-2 py-1 rounded-full font-medium">{p}</span>
@@ -90,13 +95,13 @@ function HeroSection({ openDemo }) {
   );
 }
 
-/* ---------- PARTNERS ---------- */
+/* ---- PARTNERS ---- */
 const PARTNERS = ["SPDA", "DICAPI", "Estudiantes Digitales", "SPDA", "DICAPI", "Estudiantes Digitales"];
 function PartnersSection() {
   return (
     <section className="py-10 bg-gray-50 border-y border-gray-100" data-testid="partners-section">
       <div className="max-w-7xl mx-auto px-6">
-        <p className="text-center text-xs uppercase tracking-[0.2em] text-gray-400 font-medium mb-6">Clientes &amp; Aliados</p>
+        <p className="text-center text-xs uppercase tracking-[0.2em] text-gray-400 font-medium mb-6">Partners</p>
         <div className="overflow-hidden">
           <div className="marquee-track">
             {[...PARTNERS, ...PARTNERS].map((p, i) => (
@@ -109,24 +114,30 @@ function PartnersSection() {
   );
 }
 
-/* ---------- NOSOTROS SECTION ---------- */
+/* ---- NOSOTROS ---- */
 const PROCESO = [
   { num: "01", icon: <Search size={18} />, title: "Entendemos el problema", desc: "Nos sumergimos en tu negocio para entender el desafío real antes de proponer cualquier solución." },
   { num: "02", icon: <Layout size={18} />, title: "Definimos la solución", desc: "Co-diseñamos contigo la arquitectura, tecnología y roadmap exactos para tu necesidad." },
   { num: "03", icon: <Code size={18} />, title: "Desarrollamos con agilidad", desc: "Iteraciones rápidas, entregas frecuentes y total transparencia durante todo el proceso." },
   { num: "04", icon: <Headphones size={18} />, title: "Acompañamos el crecimiento", desc: "Soporte, mejoras y escalabilidad continua. No terminamos en la entrega, crecemos contigo." },
 ];
+
 function NosotrosSection() {
   return (
     <section className="py-20 bg-white" id="nosotros">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12">
           <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Quiénes somos</p>
-          <h2 className="text-4xl font-bold text-[#003b72] max-w-2xl leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
-            Empresa especializada en IA para Latinoamérica
+          <h2 className="text-4xl font-bold text-[#003b72] mb-3 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
+            Empresa especializada en desarrollo de software a medida — <span className="gradient-text">IA Powered</span>
           </h2>
+          <p className="text-gray-600 text-lg leading-relaxed max-w-2xl">
+            Resolvemos problemas de forma innovadora. Equipos especializados, entregas ágiles y total transparencia en cada etapa del proyecto.
+          </p>
         </div>
-        <div className="grid md:grid-cols-2 gap-6 mb-10">
+
+        {/* Mission + Vision */}
+        <div className="grid md:grid-cols-2 gap-5 mb-10">
           <div className="bg-[#f8fafc] rounded-2xl p-7 border border-gray-100">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-9 h-9 rounded-xl bg-[#fc5e5f]/10 flex items-center justify-center"><Target size={17} color="#fc5e5f" /></div>
@@ -142,38 +153,61 @@ function NosotrosSection() {
             <p className="text-gray-600 text-sm leading-relaxed">Ser el principal partner tecnológico en IA para empresas y organizaciones en Latinoamérica, liderando la transformación digital con soluciones de impacto real.</p>
           </div>
         </div>
-        <div className="bg-[#003b72] text-white rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-5 mb-12">
+
+        {/* Presence with flags */}
+        <div className="bg-[#003b72] text-white rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-5 mb-14">
           <div>
             <p className="text-white/50 text-xs uppercase tracking-widest mb-1">Presencia regional</p>
             <h3 className="text-xl font-bold" style={{ fontFamily: "Outfit, sans-serif" }}>4 países, 1 visión</h3>
           </div>
           <div className="flex flex-wrap gap-3">
-            {[{ country: "Chile", note: "Sede central" }, { country: "México" }, { country: "Perú" }, { country: "Argentina" }].map((c) => (
+            {[{ country: "Chile", flag: "🇨🇱", note: "Sede central" }, { country: "México", flag: "🇲🇽" }, { country: "Perú", flag: "🇵🇪" }, { country: "Argentina", flag: "🇦🇷" }].map((c) => (
               <div key={c.country} className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-2.5">
-                <MapPin size={13} className="text-[#009ee7]" />
+                <span className="text-lg">{c.flag}</span>
                 <span className="font-medium text-sm">{c.country}</span>
                 {c.note && <span className="text-xs text-white/50">{c.note}</span>}
               </div>
             ))}
           </div>
         </div>
+
+        {/* Timeline */}
         <div className="mb-4">
           <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Cómo trabajamos</p>
-          <h2 className="text-3xl font-bold text-[#003b72] mb-8" style={{ fontFamily: "Outfit, sans-serif" }}>Codo a codo con el cliente</h2>
+          <h2 className="text-3xl font-bold text-[#003b72] mb-10" style={{ fontFamily: "Outfit, sans-serif" }}>Codo a codo con el cliente</h2>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {PROCESO.map((step) => (
-            <div key={step.num} className="bg-white rounded-2xl p-6 border border-gray-100 card-lift" data-testid={`proceso-${step.num}`}>
-              <div className="text-3xl font-bold text-gray-100 mb-3" style={{ fontFamily: "IBM Plex Mono, monospace" }}>{step.num}</div>
-              <div className="w-8 h-8 rounded-lg bg-[#009ee7]/10 flex items-center justify-center text-[#009ee7] mb-3">{step.icon}</div>
-              <h4 className="font-bold text-[#003b72] mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>{step.title}</h4>
-              <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
-            </div>
-          ))}
+
+        {/* Desktop timeline */}
+        <div className="relative">
+          {/* Connector line (desktop only) */}
+          <div className="hidden lg:block absolute h-0.5 bg-gradient-to-r from-[#fc5e5f] via-[#009ee7] to-[#e8902f] top-5 z-0" style={{ left: "12.5%", right: "12.5%" }} />
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-4">
+            {PROCESO.map((step, idx) => (
+              <div key={step.num} className="flex lg:flex-col items-start lg:items-center gap-5 lg:gap-0 relative">
+                {/* Mobile vertical connector */}
+                {idx < PROCESO.length - 1 && (
+                  <div className="lg:hidden absolute left-5 w-0.5 bg-gray-200 z-0" style={{ top: "42px", height: "calc(100% + 24px)" }} />
+                )}
+                {/* Number circle */}
+                <div className="w-10 h-10 rounded-full bg-[#003b72] text-white flex items-center justify-center font-bold text-sm z-10 relative shrink-0 lg:mb-5 shadow-lg shadow-[#003b72]/20">
+                  {idx + 1}
+                </div>
+                <div className="lg:text-center pb-4 lg:pb-0 lg:px-2">
+                  <div className="flex lg:justify-center mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-[#009ee7]/10 flex items-center justify-center text-[#009ee7]">{step.icon}</div>
+                  </div>
+                  <h4 className="font-bold text-[#003b72] mb-1 text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>{step.title}</h4>
+                  <p className="text-gray-500 text-xs leading-relaxed">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="mt-8 text-center">
-          <Link to="/nosotros" className="inline-flex items-center gap-2 text-[#009ee7] font-medium hover:gap-3 transition-all text-sm" data-testid="nosotros-more-link">
-            Conocer más sobre nosotros <ArrowRight size={15} />
+
+        <div className="mt-10 text-center">
+          <Link to="/equipo" className="inline-flex items-center gap-2 text-[#009ee7] font-medium hover:gap-3 transition-all text-sm" data-testid="equipo-link">
+            Conoce a nuestro equipo <ArrowRight size={15} />
           </Link>
         </div>
       </div>
@@ -181,7 +215,7 @@ function NosotrosSection() {
   );
 }
 
-/* ---------- TECNOLOGÍA SECTION ---------- */
+/* ---- TECNOLOGÍA ---- */
 const CAPS = [
   { icon: <BrainCircuit size={20} />, label: "IA Aplicada" },
   { icon: <Code size={20} />, label: "Automatización" },
@@ -195,12 +229,8 @@ function TecnologiaSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-[#009ee7] font-medium mb-4">Tecnología</p>
-            <h2 className="text-4xl font-bold mb-4 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
-              Desarrollo a medida con IA
-            </h2>
-            <p className="text-white/70 leading-relaxed mb-8">
-              Resolvemos problemas reales con tecnología de vanguardia. Equipos especializados, entregas ágiles y total transparencia en cada etapa del proyecto.
-            </p>
+            <h2 className="text-4xl font-bold mb-4 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>Desarrollo a medida con IA</h2>
+            <p className="text-white/70 leading-relaxed mb-8">Resolvemos problemas reales con tecnología de vanguardia. Equipos especializados, entregas ágiles y total transparencia en cada etapa.</p>
             <Link to="/tecnologia" className="inline-flex items-center gap-2 px-6 py-3 border border-white/30 text-white rounded-full text-sm font-semibold hover:bg-white hover:text-[#003b72] transition-all" data-testid="tecnologia-section-link">
               Ver todos los servicios <ArrowRight size={15} />
             </Link>
@@ -208,9 +238,7 @@ function TecnologiaSection() {
           <div className="grid grid-cols-2 gap-4">
             {CAPS.map((cap) => (
               <div key={cap.label} className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors group" data-testid={`cap-${cap.label.toLowerCase().replace(/\s+/g, "-")}`}>
-                <div className="w-10 h-10 rounded-xl bg-[#009ee7]/20 flex items-center justify-center mb-3 text-[#009ee7] group-hover:bg-[#009ee7] group-hover:text-white transition-all">
-                  {cap.icon}
-                </div>
+                <div className="w-10 h-10 rounded-xl bg-[#009ee7]/20 flex items-center justify-center mb-3 text-[#009ee7] group-hover:bg-[#009ee7] group-hover:text-white transition-all">{cap.icon}</div>
                 <span className="font-semibold text-sm">{cap.label}</span>
               </div>
             ))}
@@ -221,31 +249,29 @@ function TecnologiaSection() {
   );
 }
 
-/* ---------- PRODUCTOS SECTION ---------- */
+/* ---- PRODUCTOS ---- */
 const CORP_PRODUCTS = [
-  { id: "botbee", icon: <Bot size={22} />, color: "#fc5e5f", bg: "#fc5e5f12", name: "Botbee", tagline: "El experto de tu empresa, disponible 24/7.", desc: "Asistente virtual inteligente entrenado con la información de tu negocio." },
-  { id: "cert", icon: <Award size={22} />, color: "#009ee7", bg: "#009ee712", name: "Cert", tagline: "Certificados e insignias al instante.", desc: "Plataforma integral de certificación digital con validez institucional." },
-  { id: "blog", icon: <PenSquare size={22} />, color: "#e8902f", bg: "#e8902f12", name: "Blog IA", tagline: "Tu voz experta, impulsada por IA.", desc: "Convierte tus ideas en artículos profesionales para web y redes." },
+  { id: "botbee", icon: <Bot size={22} />, color: "#fc5e5f", bg: "#fc5e5f12", name: "Botbee", tagline: "El experto de tu empresa, disponible 24/7.", desc: "Asistente virtual inteligente entrenado con la información de tu negocio.", href: "/productos#botbee" },
+  { id: "cert", icon: <Award size={22} />, color: "#009ee7", bg: "#009ee712", name: "Cert", tagline: "Certificados e insignias al instante.", desc: "Plataforma de certificación digital con validez institucional.", href: "/productos#cert" },
+  { id: "blog", icon: <PenSquare size={22} />, color: "#e8902f", bg: "#e8902f12", name: "Blog IA", tagline: "Tu voz experta, impulsada por IA.", desc: "Convierte tus ideas en artículos profesionales para web y redes.", href: "/productos#blog" },
 ];
 const ED_PRODUCTS = [
-  { id: "ed-master", icon: <Trophy size={22} />, color: "#fc5e5f", bg: "#fc5e5f12", name: "ED Master", tagline: "Entrena y llega preparado a tu examen.", desc: "Plataforma de entrenamiento con bancos de preguntas y simulaciones." },
-  { id: "ed-teach", icon: <BookOpen size={22} />, color: "#009ee7", bg: "#009ee712", name: "ED Teach", tagline: "Crea materiales didácticos en segundos.", desc: "Genera recursos educativos con IA para docentes en segundos." },
-  { id: "ed-math", icon: <Calculator size={22} />, color: "#e8902f", bg: "#e8902f12", name: "ED Math", tagline: "Domina las matemáticas paso a paso.", desc: "LMS especializado en matemáticas con seguimiento en tiempo real." },
+  { id: "ed-master", icon: <Trophy size={22} />, color: "#fc5e5f", bg: "#fc5e5f12", name: "ED Master", tagline: "Entrena y llega preparado a tu examen.", desc: "Plataforma de entrenamiento con bancos de preguntas y simulaciones.", href: "/estudiantes-digitales#ed-master" },
+  { id: "ed-teach", icon: <BookOpen size={22} />, color: "#65B4B8", bg: "#65B4B812", name: "ED Teach", tagline: "Crea materiales didácticos en segundos.", desc: "Genera recursos educativos con IA para docentes.", href: "/estudiantes-digitales#ed-teach" },
+  { id: "ed-math", icon: <Calculator size={22} />, color: "#2B7F87", bg: "#2B7F8712", name: "ED Math", tagline: "Domina las matemáticas paso a paso.", desc: "LMS especializado en matemáticas con seguimiento en tiempo real.", href: "/estudiantes-digitales#ed-math" },
 ];
 
-function ProductCard({ product, href }) {
+function ProductCard({ product }) {
   return (
-    <Link to={href} className="card-lift bg-white border border-gray-100 rounded-2xl p-6 group block" data-testid={`product-card-${product.id}`}>
-      <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: product.bg, color: product.color }}>
-        {product.icon}
-      </div>
+    <a href={product.href} className="card-lift bg-white border border-gray-100 rounded-2xl p-6 group block" data-testid={`product-card-${product.id}`}>
+      <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: product.bg, color: product.color }}>{product.icon}</div>
       <h4 className="font-bold text-[#003b72] text-lg mb-1 group-hover:text-[#009ee7] transition-colors" style={{ fontFamily: "Outfit, sans-serif" }}>{product.name}</h4>
       <p className="text-xs font-medium mb-2" style={{ color: product.color }}>{product.tagline}</p>
       <p className="text-gray-500 text-sm leading-relaxed">{product.desc}</p>
       <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-gray-400 group-hover:text-[#009ee7] group-hover:gap-2.5 transition-all">
         Ver más <ArrowRight size={12} />
       </div>
-    </Link>
+    </a>
   );
 }
 
@@ -263,54 +289,49 @@ function ProductosSection() {
             <button onClick={() => setTab("corp")} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${tab === "corp" ? "bg-[#003b72] text-white" : "text-gray-500 hover:text-[#003b72]"}`} data-testid="tab-corporativos">
               Corporativos
             </button>
-            <button onClick={() => setTab("ed")} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${tab === "ed" ? "bg-[#e8902f] text-white" : "text-gray-500 hover:text-[#e8902f]"}`} data-testid="tab-estudiantes">
-              Alianza ED
+            <button onClick={() => setTab("ed")} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${tab === "ed" ? "bg-[#2B7F87] text-white" : "text-gray-500 hover:text-[#2B7F87]"}`} data-testid="tab-estudiantes">
+              Estudiantes Digitales
             </button>
           </div>
         </div>
 
         {tab === "corp" ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" data-testid="corp-products-grid">
-            {CORP_PRODUCTS.map((p) => <ProductCard key={p.id} product={p} href="/productos" />)}
+            {CORP_PRODUCTS.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" data-testid="ed-products-grid">
-            {ED_PRODUCTS.map((p) => <ProductCard key={p.id} product={p} href="/estudiantes-digitales" />)}
+            {ED_PRODUCTS.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         )}
 
         <div className="mt-8 text-center">
-          <Link to={tab === "corp" ? "/productos" : "/estudiantes-digitales"} className="inline-flex items-center gap-2 text-[#009ee7] font-medium text-sm hover:gap-3 transition-all" data-testid="products-more-link">
+          <a href={tab === "corp" ? "/productos" : "/estudiantes-digitales"} className="inline-flex items-center gap-2 text-[#009ee7] font-medium text-sm hover:gap-3 transition-all" data-testid="products-more-link">
             Ver todos los productos <ArrowRight size={15} />
-          </Link>
+          </a>
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- QUIZ SECTION ---------- */
+/* ---- QUIZ ---- */
 function QuizSection({ openDemo }) {
   return (
     <section className="py-20 bg-white" id="quiz">
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-10">
-          <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Herramienta de selección</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Encuentra tu producto ideal</p>
           <h2 className="text-4xl font-bold text-[#003b72] mb-3" style={{ fontFamily: "Outfit, sans-serif" }}>¿Qué producto necesito?</h2>
-          <p className="text-gray-500">Responde 3 preguntas y te recomendamos el producto ideal. <span className="text-gray-400">(opcional)</span></p>
+          <p className="text-gray-500">Responde 3 preguntas y te recomendamos el producto ideal. <span className="text-gray-400 text-sm">(opcional)</span></p>
         </div>
         <ProductQuiz onContact={openDemo} />
-        <div className="mt-5 text-center">
-          <Link to="/que-producto-necesito" className="text-sm text-gray-400 hover:text-[#009ee7] transition-colors underline" data-testid="quiz-fullpage-link">
-            Abrir en página completa
-          </Link>
-        </div>
       </div>
     </section>
   );
 }
 
-/* ---------- CONTACTO SECTION ---------- */
+/* ---- CONTACTO ---- */
 const PRODUCTOS_LIST = ["Botbee", "Cert", "Blog IA", "ED Master", "ED Teach", "ED Math", "Desarrollo a Medida"];
 function ContactoSection() {
   const [form, setForm] = useState({ nombre: "", apellido: "", email: "", empresa: "", producto: "", desafio: "" });
@@ -333,15 +354,12 @@ function ContactoSection() {
         <div className="grid lg:grid-cols-2 gap-14 items-start">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-4">Contáctanos</p>
-            <h2 className="text-4xl font-bold text-[#003b72] mb-5 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
-              Hablemos sobre tu proyecto
-            </h2>
+            <h2 className="text-4xl font-bold text-[#003b72] mb-5 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>Hablemos sobre tu proyecto</h2>
             <p className="text-gray-600 leading-relaxed mb-8">Nuestro equipo responde en menos de 24 horas. Cuéntanos tu desafío y juntos encontramos la mejor solución.</p>
             <ul className="flex flex-col gap-3 mb-10">
               {["Respuesta en menos de 24 horas", "Demo personalizada según tu industria", "Sin compromisos", "Propuesta inicial sin costo"].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-gray-700 text-sm">
-                  <CheckCircle size={17} className="text-[#009ee7] shrink-0" />
-                  {item}
+                  <CheckCircle size={17} className="text-[#009ee7] shrink-0" />{item}
                 </li>
               ))}
             </ul>
@@ -407,9 +425,21 @@ function ContactoSection() {
   );
 }
 
-/* ---------- MAIN PAGE ---------- */
+/* ---- MAIN ---- */
 export default function HomePage() {
   const { openDemo } = useDemo();
+  const location = useLocation();
+
+  // Handle scroll-to-quiz from nav or redirect
+  useEffect(() => {
+    if (location.state?.scrollTo === "quiz") {
+      setTimeout(() => {
+        const el = document.getElementById("quiz");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 350);
+    }
+  }, [location.state]);
+
   return (
     <>
       <HeroSection openDemo={openDemo} />
