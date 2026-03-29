@@ -8,18 +8,21 @@ const PRODUCTOS = [
     tagline: "El experto de tu empresa, disponible 24/7.",
     desc: "Asistente virtual inteligente entrenado con la información específica de tu negocio. Guía a clientes y usuarios resolviendo dudas basadas en tus documentos.",
     features: ["Responde solo con tus documentos propios", "No usa datos genéricos de internet", "Nombre, cargo y tono de voz personalizables", "Sube archivos y crea tu agente de ayuda", "Se adapta a cualquier rubro"],
+    detailLink: "/productos/botbee",
   },
   {
     id: "cert", icon: <Award size={32} />, color: "#009ee7", bg: "#009ee715", name: "Cert",
     tagline: "Logros auténticos, insignias y certificados al instante.",
     desc: "Plataforma integral de certificación digital para generar diplomas e insignias con validez institucional. Para instituciones, empresas, emprendedores y profesores.",
     features: ["Emisión masiva de certificados", "Personalización de identidad visual", "Verificación con código QR antifalsificación", "Fidelidad de diseño PDF", "Versatilidad para distintos perfiles"],
+    detailLink: "/productos/cert",
   },
   {
     id: "blog", icon: <PenSquare size={32} />, color: "#e8902f", bg: "#e8902f15", name: "Blog IA",
     tagline: "Tu voz experta, impulsada por IA.",
     desc: "Herramienta que convierte tus ideas clave en artículos profesionales para tu web y redes sociales sin escribir todo desde cero.",
     features: ["Publica en LinkedIn e Instagram con un clic", "Sistema ágil: crea, revisa y lanza", "Mejora tu posicionamiento en Google", "Diseñado para evitar complicaciones técnicas", "Contenido adaptado a tu industria"],
+    detailLink: "/productos/blog-ia",
   },
 ];
 
@@ -63,9 +66,9 @@ export default function ProductosPage() {
                     </li>
                   ))}
                 </ul>
-                <button onClick={openDemo} className="px-7 py-3.5 text-white rounded-full font-semibold hover:opacity-90 transition-all hover:-translate-y-0.5 shadow-lg" style={{ background: product.color, boxShadow: `0 8px 20px ${product.color}35` }} data-testid={`product-contact-btn-${product.id}`}>
-                  Contáctanos sobre {product.name}
-                </button>
+                <Link to={product.detailLink} className="inline-flex items-center gap-2 px-6 py-2.5 border-2 rounded-full font-semibold text-sm hover:opacity-80 transition-all" style={{ borderColor: product.color, color: product.color }} data-testid={`product-detail-btn-${product.id}`}>
+                  Ver más sobre {product.name} <ArrowRight size={14} />
+                </Link>
               </div>
               <div className={`hidden lg:block ${idx % 2 !== 0 ? "lg:order-1" : ""}`}>
                 <div className="w-full rounded-3xl p-12 flex items-center justify-center" style={{ background: product.bg, minHeight: "320px" }}>

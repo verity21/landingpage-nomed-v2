@@ -45,7 +45,7 @@ export const PRODUCT_INFO = {
     border: "#fc5e5f30",
     tagline: "El experto de tu empresa, disponible 24/7.",
     desc: "Asistente virtual inteligente entrenado con la información de tu negocio. Resuelve dudas de clientes sin intervención humana.",
-    link: "/productos#botbee",
+    link: "/productos/botbee",
   },
   Cert: {
     color: "#009ee7",
@@ -53,7 +53,7 @@ export const PRODUCT_INFO = {
     border: "#009ee730",
     tagline: "Logros auténticos, insignias y certificados al instante.",
     desc: "Plataforma de certificación digital con validez institucional. Emite diplomas e insignias con verificación QR antifalsificación.",
-    link: "/productos#cert",
+    link: "/productos/cert",
   },
   "Blog IA": {
     color: "#e8902f",
@@ -61,15 +61,15 @@ export const PRODUCT_INFO = {
     border: "#e8902f30",
     tagline: "Tu voz experta, impulsada por IA.",
     desc: "Convierte tus ideas en artículos profesionales para tu web y redes sociales. Publica en LinkedIn e Instagram con un clic.",
-    link: "/productos#blog",
+    link: "/productos/blog-ia",
   },
   "ED Master": {
-    color: "#fc5e5f",
-    bg: "#fc5e5f10",
-    border: "#fc5e5f30",
+    color: "#FF7878",
+    bg: "#FF787810",
+    border: "#FF787830",
     tagline: "Entrena con preguntas reales y llega preparado a tu examen.",
     desc: "Plataforma de entrenamiento académico con bancos de preguntas, modos de práctica, simulaciones y seguimiento del progreso.",
-    link: "/estudiantes-digitales#ed-master",
+    link: "/estudiantes-digitales/ed-master",
   },
   "ED Teach": {
     color: "#65B4B8",
@@ -77,7 +77,7 @@ export const PRODUCT_INFO = {
     border: "#65B4B830",
     tagline: "Crea materiales didácticos y juegos educativos en segundos.",
     desc: "Genera recursos educativos personalizados con IA: flashcards, evaluaciones, juegos interactivos y más, en segundos.",
-    link: "/estudiantes-digitales#ed-teach",
+    link: "/estudiantes-digitales/ed-teach",
   },
   "ED Math": {
     color: "#2B7F87",
@@ -85,10 +85,18 @@ export const PRODUCT_INFO = {
     border: "#2B7F8730",
     tagline: "Domina las matemáticas paso a paso.",
     desc: "LMS especializado en matemáticas con seguimiento en tiempo real, métricas de desempeño y certificación al completar.",
-    link: "/estudiantes-digitales#ed-math",
+    link: "/estudiantes-digitales/ed-math",
   },
 };
 
+const OPTION_COLORS = [
+  { bg: "#fc5e5f08", activeBg: "#fc5e5f15", border: "#fc5e5f40", text: "#fc5e5f" },
+  { bg: "#009ee708", activeBg: "#009ee715", border: "#009ee740", text: "#009ee7" },
+  { bg: "#e8902f08", activeBg: "#e8902f15", border: "#e8902f40", text: "#e8902f" },
+  { bg: "#2B7F8708", activeBg: "#2B7F8715", border: "#2B7F8740", text: "#2B7F87" },
+  { bg: "#003b7208", activeBg: "#003b7215", border: "#003b7240", text: "#003b72" },
+  { bg: "#FF787808", activeBg: "#FF787815", border: "#FF787840", text: "#FF7878" },
+];
 function getRecommendation(allAnswerScores) {
   const totals = {};
   allAnswerScores.forEach((answerScores) => {
@@ -130,10 +138,10 @@ export default function ProductQuiz({ onContact }) {
   const progress = result ? 100 : (currentStep / QUESTIONS.length) * 100;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" data-testid="product-quiz">
+    <div className="rounded-2xl overflow-hidden shadow-md border border-gray-100" style={{ background: "linear-gradient(135deg, #fff5f5 0%, #f0f8ff 50%, #fffbf5 100%)" }} data-testid="product-quiz">
       {/* Progress bar */}
-      <div className="h-1 bg-gray-100">
-        <div className="h-full bg-gradient-to-r from-[#fc5e5f] to-[#009ee7] transition-all duration-500" style={{ width: `${progress}%` }} data-testid="quiz-progress-bar" />
+      <div className="h-1.5 bg-white/50">
+        <div className="h-full transition-all duration-500" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #fc5e5f, #009ee7, #e8902f)" }} data-testid="quiz-progress-bar" />
       </div>
 
       <div className="p-6 md:p-8">
@@ -175,12 +183,15 @@ export default function ProductQuiz({ onContact }) {
               {QUESTIONS[currentStep].question}
             </h3>
             <div className="grid sm:grid-cols-2 gap-2.5">
-              {QUESTIONS[currentStep].options.map((option, idx) => (
-                <button key={idx} onClick={() => handleAnswer(option.scores)} className="text-left px-4 py-3.5 border border-gray-200 rounded-xl text-gray-700 text-sm font-medium hover:border-[#009ee7] hover:text-[#009ee7] hover:bg-[#009ee7]/5 transition-all flex items-center justify-between group" data-testid={`quiz-option-q${currentStep + 1}-${idx + 1}`}>
-                  <span>{option.label}</span>
-                  <ArrowRight size={14} className="text-gray-300 group-hover:text-[#009ee7] shrink-0 ml-2" />
-                </button>
-              ))}
+              {QUESTIONS[currentStep].options.map((option, idx) => {
+                const col = OPTION_COLORS[idx % OPTION_COLORS.length];
+                return (
+                  <button key={idx} onClick={() => handleAnswer(option.scores)} className="text-left px-4 py-3.5 rounded-xl text-sm font-medium transition-all flex items-center justify-between group border" style={{ background: col.bg, borderColor: col.border, color: "#374151" }} onMouseEnter={e => { e.currentTarget.style.background = col.activeBg; e.currentTarget.style.color = col.text; }} onMouseLeave={e => { e.currentTarget.style.background = col.bg; e.currentTarget.style.color = "#374151"; }} data-testid={`quiz-option-q${currentStep + 1}-${idx + 1}`}>
+                    <span>{option.label}</span>
+                    <ArrowRight size={14} className="shrink-0 ml-2 opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: col.text }} />
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

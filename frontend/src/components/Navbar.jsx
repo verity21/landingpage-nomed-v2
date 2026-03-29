@@ -6,7 +6,6 @@ import { useDemo } from "@/contexts/DemoContext";
 const NAV_LINKS = [
   { label: "Inicio", to: "/" },
   { label: "Equipo", to: "/equipo" },
-  { label: "Tecnología", to: "/tecnologia" },
   { label: "Productos", to: "/productos" },
   { label: "Estudiantes Digitales", to: "/estudiantes-digitales" },
 ];
@@ -35,16 +34,15 @@ export default function Navbar() {
     setMobileOpen(false);
   }, [location]);
 
-  const handleQuizClick = (e) => {
-    e.preventDefault();
+  const scrollToSection = (sectionId) => {
     setMobileOpen(false);
     if (location.pathname === "/") {
-      const el = document.getElementById("quiz");
+      const el = document.getElementById(sectionId);
       if (el) el.scrollIntoView({ behavior: "smooth" });
     } else {
       navigate("/");
       setTimeout(() => {
-        const el = document.getElementById("quiz");
+        const el = document.getElementById(sectionId);
         if (el) el.scrollIntoView({ behavior: "smooth" });
       }, 350);
     }
@@ -62,12 +60,21 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden xl:flex items-center gap-0.5" data-testid="desktop-nav">
-          {NAV_LINKS.map((link) => (
+          <Link to="/" className={`px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${location.pathname === "/" ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-link-inicio">
+            Inicio
+          </Link>
+          <button onClick={() => scrollToSection("nosotros")} className="px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap text-gray-600 hover:text-[#003b72] hover:bg-gray-50" data-testid="nav-link-nosotros">
+            Nosotros
+          </button>
+          <button onClick={() => scrollToSection("servicios")} className="px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap text-gray-600 hover:text-[#003b72] hover:bg-gray-50" data-testid="nav-link-servicios">
+            Servicios
+          </button>
+          {NAV_LINKS.filter(l => l.label !== "Inicio").map((link) => (
             <Link key={link.to} to={link.to} className={`px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${location.pathname === link.to ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid={`nav-link-${link.label.toLowerCase().replace(/\s+/g, "-").replace(/[¿?]/g, "")}`}>
               {link.label}
             </Link>
           ))}
-          <button onClick={handleQuizClick} className={`px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap text-gray-600 hover:text-[#003b72] hover:bg-gray-50`} data-testid="nav-quiz-btn">
+          <button onClick={() => scrollToSection("quiz")} className="px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap text-gray-600 hover:text-[#003b72] hover:bg-gray-50" data-testid="nav-quiz-btn">
             ¿Qué producto necesito?
           </button>
         </nav>
@@ -85,12 +92,15 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className="xl:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-2" data-testid="mobile-menu">
-          {NAV_LINKS.map((link) => (
+          <Link to="/" className="px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#003b72] transition-colors" data-testid="mobile-nav-inicio">Inicio</Link>
+          <button onClick={() => scrollToSection("nosotros")} className="px-4 py-3 rounded-xl text-sm font-medium text-left text-gray-700 hover:bg-gray-50 hover:text-[#003b72] transition-colors" data-testid="mobile-nav-nosotros">Nosotros</button>
+          <button onClick={() => scrollToSection("servicios")} className="px-4 py-3 rounded-xl text-sm font-medium text-left text-gray-700 hover:bg-gray-50 hover:text-[#003b72] transition-colors" data-testid="mobile-nav-servicios">Servicios</button>
+          {NAV_LINKS.filter(l => l.label !== "Inicio").map((link) => (
             <Link key={link.to} to={link.to} className="px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#003b72] transition-colors" data-testid={`mobile-nav-${link.label.toLowerCase().replace(/\s+/g, "-").replace(/[¿?]/g, "")}`}>
               {link.label}
             </Link>
           ))}
-          <button onClick={handleQuizClick} className="px-4 py-3 rounded-xl text-sm font-medium text-left text-gray-700 hover:bg-gray-50 hover:text-[#003b72] transition-colors" data-testid="mobile-quiz-btn">
+          <button onClick={() => scrollToSection("quiz")} className="px-4 py-3 rounded-xl text-sm font-medium text-left text-gray-700 hover:bg-gray-50 hover:text-[#003b72] transition-colors" data-testid="mobile-quiz-btn">
             ¿Qué producto necesito?
           </button>
           <button onClick={() => { setMobileOpen(false); openDemo(); }} className="mt-2 w-full px-5 py-3 bg-[#fc5e5f] text-white rounded-full text-sm font-semibold hover:bg-[#e04e4f] transition-colors" data-testid="mobile-contact-btn">

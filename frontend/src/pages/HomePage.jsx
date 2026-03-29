@@ -7,6 +7,7 @@ import {
   BrainCircuit, Package, GraduationCap, ArrowRight, Sparkles,
   CheckCircle, Target, Eye, Search, Layout, Code, Headphones,
   Bot, Award, PenSquare, BookOpen, Calculator, Trophy,
+  Zap, Link2, Smartphone, BarChart3, TrendingUp, Layers, Plug,
 } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -127,11 +128,13 @@ function NosotrosSection() {
     <section className="py-20 bg-white" id="nosotros">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12">
-          <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Quiénes somos</p>
-          <h2 className="text-4xl font-bold text-[#003b72] mb-3 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
-            Empresa especializada en desarrollo de software a medida — <span className="gradient-text">IA Powered</span>
+          <h2 className="text-5xl lg:text-6xl font-bold text-[#003b72] mb-4 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
+            NOSOTROS
           </h2>
-          <p className="text-gray-600 text-lg leading-relaxed max-w-2xl">
+          <p className="text-xl text-gray-600 leading-relaxed max-w-2xl">
+            Empresa especializada en desarrollo de software a medida — <span className="gradient-text font-semibold">IA Powered</span>
+          </p>
+          <p className="text-gray-500 text-base leading-relaxed max-w-2xl mt-3">
             Resolvemos problemas de forma innovadora. Equipos especializados, entregas ágiles y total transparencia en cada etapa del proyecto.
           </p>
         </div>
@@ -172,9 +175,8 @@ function NosotrosSection() {
         </div>
 
         {/* Timeline */}
-        <div className="mb-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Cómo trabajamos</p>
-          <h2 className="text-3xl font-bold text-[#003b72] mb-10" style={{ fontFamily: "Outfit, sans-serif" }}>Codo a codo con el cliente</h2>
+        <div className="mb-8">
+          <h2 className="text-5xl lg:text-6xl font-bold text-[#003b72]" style={{ fontFamily: "Outfit, sans-serif" }}>¿CÓMO TRABAJAMOS?</h2>
         </div>
 
         {/* Desktop timeline */}
@@ -206,8 +208,8 @@ function NosotrosSection() {
         </div>
 
         <div className="mt-10 text-center">
-          <Link to="/equipo" className="inline-flex items-center gap-2 text-[#009ee7] font-medium hover:gap-3 transition-all text-sm" data-testid="equipo-link">
-            Conoce a nuestro equipo <ArrowRight size={15} />
+          <Link to="/equipo" className="inline-flex items-center gap-2 px-8 py-4 bg-[#003b72] text-white rounded-full font-semibold text-base hover:bg-[#002a55] transition-all hover:-translate-y-0.5 shadow-md shadow-[#003b72]/20" data-testid="equipo-link">
+            Conoce a nuestro equipo <ArrowRight size={16} />
           </Link>
         </div>
       </div>
@@ -215,31 +217,57 @@ function NosotrosSection() {
   );
 }
 
-/* ---- TECNOLOGÍA ---- */
-const CAPS = [
-  { icon: <BrainCircuit size={20} />, label: "IA Aplicada" },
-  { icon: <Code size={20} />, label: "Automatización" },
-  { icon: <Package size={20} />, label: "Integraciones" },
-  { icon: <GraduationCap size={20} />, label: "Web & Mobile" },
+/* ---- SERVICIOS ---- */
+const SERVICIOS_CAPS = [
+  { icon: <BrainCircuit size={16} />, label: "IA Aplicada" },
+  { icon: <Zap size={16} />, label: "Automatización" },
+  { icon: <Link2 size={16} />, label: "Integraciones" },
+  { icon: <Smartphone size={16} />, label: "Web & Mobile" },
+  { icon: <BarChart3 size={16} />, label: "Data & Analytics" },
+  { icon: <TrendingUp size={16} />, label: "Transformación Digital" },
 ];
-function TecnologiaSection() {
+const SERVICE_CARDS = [
+  { icon: <BrainCircuit size={28} />, color: "#003b72", bg: "#003b7210", label: "IA", sub: "Integrada en todo" },
+  { icon: <Layers size={28} />, color: "#fc5e5f", bg: "#fc5e5f10", label: "Agile", sub: "Metodología ágil" },
+  { icon: <Plug size={28} />, color: "#e8902f", bg: "#e8902f10", label: "APIs", sub: "Integraciones" },
+  { icon: <BarChart3 size={28} />, color: "#009ee7", bg: "#009ee710", label: "Data", sub: "Analytics" },
+];
+function ServiciosSection({ openDemo }) {
   return (
-    <section className="py-16 bg-[#003b72] text-white" id="tecnologia">
+    <section className="py-20 bg-white" id="servicios">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-14 items-center">
+          {/* Left column */}
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-[#009ee7] font-medium mb-4">Tecnología</p>
-            <h2 className="text-4xl font-bold mb-4 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>Desarrollo a medida con IA</h2>
-            <p className="text-white/70 leading-relaxed mb-8">Resolvemos problemas reales con tecnología de vanguardia. Equipos especializados, entregas ágiles y total transparencia en cada etapa.</p>
-            <Link to="/tecnologia" className="inline-flex items-center gap-2 px-6 py-3 border border-white/30 text-white rounded-full text-sm font-semibold hover:bg-white hover:text-[#003b72] transition-all" data-testid="tecnologia-section-link">
-              Ver todos los servicios <ArrowRight size={15} />
-            </Link>
+            <span className="inline-block text-xs font-semibold uppercase tracking-widest bg-[#009ee7]/10 text-[#009ee7] px-4 py-2 rounded-full mb-5">Servicios</span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-[#003b72] mb-3 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
+              Desarrollo de software a medida
+            </h2>
+            <p className="text-lg font-semibold text-[#fc5e5f] mb-4">IA Powered</p>
+            <p className="text-gray-600 leading-relaxed mb-8">
+              Nos apasiona resolver problemas de forma innovadora. Trabajamos con agilidad y equipos especializados para garantizar el avance sin contratiempos de tu proyecto tecnológico.
+            </p>
+            <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-8">
+              {SERVICIOS_CAPS.map((cap) => (
+                <div key={cap.label} className="flex items-center gap-2.5 text-sm text-gray-700">
+                  <span className="text-[#003b72]">{cap.icon}</span>
+                  <span>{cap.label}</span>
+                </div>
+              ))}
+            </div>
+            <button onClick={openDemo} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#003b72] text-white rounded-full font-semibold hover:bg-[#002a55] transition-all hover:-translate-y-0.5 shadow-lg shadow-[#003b72]/20" data-testid="servicios-contact-btn">
+              Contáctanos <ArrowRight size={15} />
+            </button>
           </div>
+          {/* Right column — 2x2 cards */}
           <div className="grid grid-cols-2 gap-4">
-            {CAPS.map((cap) => (
-              <div key={cap.label} className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors group" data-testid={`cap-${cap.label.toLowerCase().replace(/\s+/g, "-")}`}>
-                <div className="w-10 h-10 rounded-xl bg-[#009ee7]/20 flex items-center justify-center mb-3 text-[#009ee7] group-hover:bg-[#009ee7] group-hover:text-white transition-all">{cap.icon}</div>
-                <span className="font-semibold text-sm">{cap.label}</span>
+            {SERVICE_CARDS.map((card) => (
+              <div key={card.label} className="card-lift bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all" data-testid={`service-card-${card.label.toLowerCase()}`}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: card.bg, color: card.color }}>
+                  {card.icon}
+                </div>
+                <h4 className="font-bold text-[#003b72] text-xl mb-1" style={{ fontFamily: "Outfit, sans-serif" }}>{card.label}</h4>
+                <p className="text-gray-400 text-sm">{card.sub}</p>
               </div>
             ))}
           </div>
@@ -251,14 +279,14 @@ function TecnologiaSection() {
 
 /* ---- PRODUCTOS ---- */
 const CORP_PRODUCTS = [
-  { id: "botbee", icon: <Bot size={22} />, color: "#fc5e5f", bg: "#fc5e5f12", name: "Botbee", tagline: "El experto de tu empresa, disponible 24/7.", desc: "Asistente virtual inteligente entrenado con la información de tu negocio.", href: "/productos#botbee" },
-  { id: "cert", icon: <Award size={22} />, color: "#009ee7", bg: "#009ee712", name: "Cert", tagline: "Certificados e insignias al instante.", desc: "Plataforma de certificación digital con validez institucional.", href: "/productos#cert" },
-  { id: "blog", icon: <PenSquare size={22} />, color: "#e8902f", bg: "#e8902f12", name: "Blog IA", tagline: "Tu voz experta, impulsada por IA.", desc: "Convierte tus ideas en artículos profesionales para web y redes.", href: "/productos#blog" },
+  { id: "botbee", icon: <Bot size={22} />, color: "#fc5e5f", bg: "#fc5e5f12", name: "Botbee", tagline: "El experto de tu empresa, disponible 24/7.", desc: "Asistente virtual inteligente entrenado con la información de tu negocio.", href: "/productos/botbee" },
+  { id: "cert", icon: <Award size={22} />, color: "#009ee7", bg: "#009ee712", name: "Cert", tagline: "Certificados e insignias al instante.", desc: "Plataforma de certificación digital con validez institucional.", href: "/productos/cert" },
+  { id: "blog", icon: <PenSquare size={22} />, color: "#e8902f", bg: "#e8902f12", name: "Blog IA", tagline: "Tu voz experta, impulsada por IA.", desc: "Convierte tus ideas en artículos profesionales para web y redes.", href: "/productos/blog-ia" },
 ];
 const ED_PRODUCTS = [
-  { id: "ed-master", icon: <Trophy size={22} />, color: "#fc5e5f", bg: "#fc5e5f12", name: "ED Master", tagline: "Entrena y llega preparado a tu examen.", desc: "Plataforma de entrenamiento con bancos de preguntas y simulaciones.", href: "/estudiantes-digitales#ed-master" },
-  { id: "ed-teach", icon: <BookOpen size={22} />, color: "#65B4B8", bg: "#65B4B812", name: "ED Teach", tagline: "Crea materiales didácticos en segundos.", desc: "Genera recursos educativos con IA para docentes.", href: "/estudiantes-digitales#ed-teach" },
-  { id: "ed-math", icon: <Calculator size={22} />, color: "#2B7F87", bg: "#2B7F8712", name: "ED Math", tagline: "Domina las matemáticas paso a paso.", desc: "LMS especializado en matemáticas con seguimiento en tiempo real.", href: "/estudiantes-digitales#ed-math" },
+  { id: "ed-master", icon: <Trophy size={22} />, color: "#FF7878", bg: "#FF787812", name: "ED Master", tagline: "Entrena y llega preparado a tu examen.", desc: "Plataforma de entrenamiento con bancos de preguntas y simulaciones.", href: "/estudiantes-digitales/ed-master" },
+  { id: "ed-teach", icon: <BookOpen size={22} />, color: "#65B4B8", bg: "#65B4B812", name: "ED Teach", tagline: "Crea materiales didácticos en segundos.", desc: "Genera recursos educativos con IA para docentes.", href: "/estudiantes-digitales/ed-teach" },
+  { id: "ed-math", icon: <Calculator size={22} />, color: "#2B7F87", bg: "#2B7F8712", name: "ED Math", tagline: "Domina las matemáticas paso a paso.", desc: "LMS especializado en matemáticas con seguimiento en tiempo real.", href: "/estudiantes-digitales/ed-math" },
 ];
 
 function ProductCard({ product }) {
@@ -283,7 +311,7 @@ function ProductosSection() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Nuestros productos</p>
-            <h2 className="text-4xl font-bold text-[#003b72]" style={{ fontFamily: "Outfit, sans-serif" }}>Herramientas listas para usar</h2>
+            <h2 className="text-5xl font-bold text-[#003b72]" style={{ fontFamily: "Outfit, sans-serif" }}>Herramientas listas para usar</h2>
           </div>
           <div className="flex gap-2 bg-white border border-gray-200 rounded-full p-1">
             <button onClick={() => setTab("corp")} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${tab === "corp" ? "bg-[#003b72] text-white" : "text-gray-500 hover:text-[#003b72]"}`} data-testid="tab-corporativos">
@@ -445,7 +473,7 @@ export default function HomePage() {
       <HeroSection openDemo={openDemo} />
       <PartnersSection />
       <NosotrosSection />
-      <TecnologiaSection />
+      <ServiciosSection openDemo={openDemo} />
       <ProductosSection />
       <QuizSection openDemo={openDemo} />
       <ContactoSection />

@@ -1,5 +1,6 @@
 import { useDemo } from "@/contexts/DemoContext";
-import { Award, ExternalLink, CheckCircle, BookOpen, Calculator, Trophy } from "lucide-react";
+import { Award, ExternalLink, CheckCircle, BookOpen, Calculator, Trophy, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ED_PRODUCTS = [
   {
@@ -7,18 +8,21 @@ const ED_PRODUCTS = [
     tagline: "Entrena con preguntas reales y llega preparado a tu examen.",
     desc: "Plataforma de entrenamiento académico con bancos de preguntas organizados por materias. Permite estudiar mediante distintos modos de entrenamiento, simular evaluaciones y analizar el desempeño.",
     features: ["Modo práctica: retroalimentación inmediata, sin límite de tiempo", "Modo evaluación: simulación con tiempo y preguntas aleatorias", "Flashcards de estudio interactivas", "Seguimiento del progreso e historial", "Indicador de preparación personalizado", "Sistema de logros y beneficios por avance"],
+    detailLink: "/estudiantes-digitales/ed-master",
   },
   {
     id: "ed-teach", icon: <BookOpen size={26} />, color: "#65B4B8", bg: "#65B4B818", name: "ED Teach",
     tagline: "Crea materiales didácticos y juegos educativos en segundos.",
     desc: "Plataforma de creación académica para que docentes generen recursos educativos personalizados en segundos usando IA.",
     features: ["Genera materiales desde texto, URL o archivo", "Flashcards, datos curiosos y ChatBot educativo", "Evaluaciones: cuestionarios, crucigramas, ruleta, quizzes", "Juegos: Sudoku, Tic Tac Toe, Conecta 4, Battleship", "Compartir por QR, WhatsApp, Google Classroom", "Interfaz diseñada para docentes con poca experiencia tech"],
+    detailLink: "/estudiantes-digitales/ed-teach",
   },
   {
     id: "ed-math", icon: <Calculator size={26} />, color: "#2B7F87", bg: "#2B7F8718", name: "ED Math",
     tagline: "Domina las matemáticas paso a paso.",
     desc: "Plataforma de gestión de aprendizaje especializada en matemáticas. Docentes crean cursos personalizados, estudiantes acceden a un entorno dinámico con seguimiento en tiempo real.",
     features: ["Gestión de cursos matemáticos personalizables", "Sistema de evaluación integrada", "Métricas de desempeño para docentes", "Panel del estudiante con notas y progreso", "Visualización de logros y rachas", "Certificación al completar el curso"],
+    detailLink: "/estudiantes-digitales/ed-math",
   },
 ];
 
@@ -105,6 +109,11 @@ export default function EstudiantesDigitalesPage() {
                       </li>
                     ))}
                   </ul>
+                  <div className="mt-5">
+                    <Link to={product.detailLink} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm hover:opacity-80 transition-all" style={{ background: product.bg, color: product.color, border: `1.5px solid ${product.color}40` }} data-testid={`ed-product-detail-btn-${product.id}`}>
+                      Ver más sobre {product.name} <ArrowRight size={13} />
+                    </Link>
+                  </div>
                 </div>
                 <div className={`hidden lg:flex items-center justify-center rounded-3xl p-12 min-h-52 ${idx % 2 !== 0 ? "lg:order-1" : ""}`} style={{ background: product.bg }}>
                   <div className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl" style={{ background: product.color }}>
