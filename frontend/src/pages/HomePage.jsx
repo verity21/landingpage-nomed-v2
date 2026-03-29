@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDemo } from "@/contexts/DemoContext";
+import { motion } from "framer-motion";
 import ProductQuiz from "@/components/ProductQuiz";
 import axios from "axios";
 import {
@@ -9,6 +10,15 @@ import {
   Bot, Award, PenSquare, BookOpen, Calculator, Trophy,
   Zap, Link2, Smartphone, BarChart3, TrendingUp, Layers, Plug,
 } from "lucide-react";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] } },
+};
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -22,27 +32,26 @@ function HeroSection({ openDemo }) {
       </div>
       <div className="max-w-7xl mx-auto px-6 relative">
         <div className="grid lg:grid-cols-2 gap-14 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 bg-[#003b72]/5 border border-[#003b72]/10 rounded-full px-4 py-2 text-sm font-medium text-[#003b72] mb-7">
+          <motion.div initial="hidden" animate="visible" variants={stagger}>
+            <motion.div variants={fadeUp} className="inline-flex items-center gap-2 bg-[#003b72]/5 border border-[#003b72]/10 rounded-full px-4 py-2 text-sm font-medium text-[#003b72] mb-7">
               <Sparkles size={14} className="text-[#fc5e5f]" />
               IA para Empresas &amp; Educación — Latinoamérica
-            </div>
-            <h1 className="text-5xl lg:text-6xl font-bold text-[#003b72] leading-tight mb-6" style={{ fontFamily: "Outfit, sans-serif" }}>
+            </motion.div>
+            <motion.h1 variants={fadeUp} className="text-5xl lg:text-6xl font-bold text-[#003b72] leading-tight mb-6" style={{ fontFamily: "Outfit, sans-serif" }}>
               Construimos tecnología con <span className="gradient-text">inteligencia artificial</span> para empresas y educación
-            </h1>
-            <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
+            </motion.h1>
+            <motion.p variants={fadeUp} className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
               Software a medida, productos corporativos con IA y EdTech. Transformación real en Latinoamérica.
-            </p>
-            <div className="flex flex-wrap gap-3 mb-10">
-              <button onClick={openDemo} className="px-7 py-3.5 bg-[#fc5e5f] text-white rounded-full font-semibold hover:bg-[#e04e4f] transition-all hover:-translate-y-0.5 shadow-lg shadow-[#fc5e5f]/25" data-testid="hero-contact-btn">
+            </motion.p>
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-3 mb-10">
+              <button onClick={openDemo} className="btn-aurora px-7 py-3.5 bg-[#fc5e5f] text-white rounded-full font-semibold shadow-lg shadow-[#fc5e5f]/25" data-testid="hero-contact-btn">
                 Contáctanos
               </button>
-              <Link to="/tecnologia" className="px-7 py-3.5 border-2 border-[#003b72] text-[#003b72] rounded-full font-semibold hover:bg-[#003b72] hover:text-white transition-all" data-testid="hero-services-btn">
+              <button onClick={() => document.getElementById("servicios")?.scrollIntoView({ behavior: "smooth" })} className="btn-aurora px-7 py-3.5 border-2 border-[#003b72] text-[#003b72] rounded-full font-semibold hover:bg-[#003b72] hover:text-white transition-colors" data-testid="hero-services-btn">
                 Ver servicios
-              </Link>
-            </div>
-            {/* Countries with flags */}
-            <div className="flex items-center gap-3 text-sm text-gray-400 flex-wrap">
+              </button>
+            </motion.div>
+            <motion.div variants={fadeUp} className="flex items-center gap-3 text-sm text-gray-400 flex-wrap">
               <span>Presencia en</span>
               {[
                 { country: "Chile", flag: "🇨🇱" },
@@ -54,8 +63,8 @@ function HeroSection({ openDemo }) {
                   <span>{c.flag}</span> {c.country}
                 </span>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
           {/* Floating product cards */}
           <div className="hidden lg:flex justify-center items-center">
             <div className="relative w-full max-w-sm">
@@ -236,42 +245,46 @@ function ServiciosSection({ openDemo }) {
   return (
     <section className="py-20 bg-white" id="servicios">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-14 items-center">
+        <motion.div className="grid lg:grid-cols-2 gap-14 items-center"
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
           {/* Left column */}
           <div>
-            <span className="inline-block text-xs font-semibold uppercase tracking-widest bg-[#009ee7]/10 text-[#009ee7] px-4 py-2 rounded-full mb-5">Servicios</span>
-            <h2 className="text-4xl lg:text-5xl font-bold text-[#003b72] mb-3 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
+            <motion.span variants={fadeUp} className="inline-block text-xs font-semibold uppercase tracking-widest bg-[#009ee7]/10 text-[#009ee7] px-4 py-2 rounded-full mb-5">Servicios</motion.span>
+            <motion.h2 variants={fadeUp} className="text-4xl lg:text-5xl font-bold text-[#003b72] mb-3 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
               Desarrollo de software a medida
-            </h2>
-            <p className="text-lg font-semibold text-[#fc5e5f] mb-4">IA Powered</p>
-            <p className="text-gray-600 leading-relaxed mb-8">
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-lg font-semibold text-[#fc5e5f] mb-4">IA Powered</motion.p>
+            <motion.p variants={fadeUp} className="text-gray-600 leading-relaxed mb-8">
               Nos apasiona resolver problemas de forma innovadora. Trabajamos con agilidad y equipos especializados para garantizar el avance sin contratiempos de tu proyecto tecnológico.
-            </p>
-            <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-8">
+            </motion.p>
+            <motion.div variants={fadeUp} className="grid grid-cols-2 gap-y-3 gap-x-4 mb-8">
               {SERVICIOS_CAPS.map((cap) => (
                 <div key={cap.label} className="flex items-center gap-2.5 text-sm text-gray-700">
                   <span className="text-[#003b72]">{cap.icon}</span>
                   <span>{cap.label}</span>
                 </div>
               ))}
-            </div>
-            <button onClick={openDemo} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#003b72] text-white rounded-full font-semibold hover:bg-[#002a55] transition-all hover:-translate-y-0.5 shadow-lg shadow-[#003b72]/20" data-testid="servicios-contact-btn">
-              Contáctanos <ArrowRight size={15} />
-            </button>
+            </motion.div>
+            <motion.div variants={fadeUp}>
+              <button onClick={openDemo} className="btn-aurora inline-flex items-center gap-2 px-7 py-3.5 bg-[#003b72] text-white rounded-full font-semibold shadow-lg shadow-[#003b72]/20" data-testid="servicios-contact-btn">
+                Contáctanos <ArrowRight size={15} />
+              </button>
+            </motion.div>
           </div>
           {/* Right column — 2x2 cards */}
-          <div className="grid grid-cols-2 gap-4">
+          <motion.div variants={stagger} className="grid grid-cols-2 gap-4">
             {SERVICE_CARDS.map((card) => (
-              <div key={card.label} className="card-lift bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all" data-testid={`service-card-${card.label.toLowerCase()}`}>
+              <motion.div key={card.label} variants={fadeUp}
+                className="card-lift bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all" data-testid={`service-card-${card.label.toLowerCase()}`}>
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: card.bg, color: card.color }}>
                   {card.icon}
                 </div>
                 <h4 className="font-bold text-[#003b72] text-xl mb-1" style={{ fontFamily: "Outfit, sans-serif" }}>{card.label}</h4>
                 <p className="text-gray-400 text-sm">{card.sub}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
@@ -308,31 +321,23 @@ function ProductosSection() {
   return (
     <section className="py-20 bg-gray-50" id="productos">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        <motion.div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10"
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Nuestros productos</p>
-            <h2 className="text-5xl font-bold text-[#003b72]" style={{ fontFamily: "Outfit, sans-serif" }}>Herramientas listas para usar</h2>
+            <motion.p variants={fadeUp} className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Nuestros productos</motion.p>
+            <motion.h2 variants={fadeUp} className="text-5xl font-bold text-[#003b72]" style={{ fontFamily: "Outfit, sans-serif" }}>Herramientas listas para usar</motion.h2>
           </div>
-          <div className="flex gap-2 bg-white border border-gray-200 rounded-full p-1">
-            <button onClick={() => setTab("corp")} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${tab === "corp" ? "bg-[#003b72] text-white" : "text-gray-500 hover:text-[#003b72]"}`} data-testid="tab-corporativos">
-              Corporativos
-            </button>
-            <button onClick={() => setTab("ed")} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${tab === "ed" ? "bg-[#2B7F87] text-white" : "text-gray-500 hover:text-[#2B7F87]"}`} data-testid="tab-estudiantes">
-              Estudiantes Digitales
-            </button>
-          </div>
-        </div>
-
-        {tab === "corp" ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" data-testid="corp-products-grid">
-            {CORP_PRODUCTS.map((p) => <ProductCard key={p.id} product={p} />)}
-          </div>
-        ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" data-testid="ed-products-grid">
-            {ED_PRODUCTS.map((p) => <ProductCard key={p.id} product={p} />)}
-          </div>
-        )}
-
+          <motion.div variants={fadeUp} className="flex gap-2 bg-white border border-gray-200 rounded-full p-1">
+            <button onClick={() => setTab("corp")} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${tab === "corp" ? "bg-[#003b72] text-white" : "text-gray-500 hover:text-[#003b72]"}`} data-testid="tab-corporativos">Corporativos</button>
+            <button onClick={() => setTab("ed")} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${tab === "ed" ? "bg-[#2B7F87] text-white" : "text-gray-500 hover:text-[#2B7F87]"}`} data-testid="tab-estudiantes">Estudiantes Digitales</button>
+          </motion.div>
+        </motion.div>
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" data-testid={tab === "corp" ? "corp-products-grid" : "ed-products-grid"}>
+          {(tab === "corp" ? CORP_PRODUCTS : ED_PRODUCTS).map((p) => <ProductCard key={p.id} product={p} />)}
+        </motion.div>
         <div className="mt-8 text-center">
           <a href={tab === "corp" ? "/productos" : "/estudiantes-digitales"} className="inline-flex items-center gap-2 text-[#009ee7] font-medium text-sm hover:gap-3 transition-all" data-testid="products-more-link">
             Ver todos los productos <ArrowRight size={15} />
@@ -347,14 +352,17 @@ function ProductosSection() {
 function QuizSection({ openDemo }) {
   return (
     <section className="py-20 bg-white" id="quiz">
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="text-center mb-10">
+      <motion.div className="max-w-4xl mx-auto px-6"
+        initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}>
+        <motion.div variants={fadeUp} className="text-center mb-10">
           <p className="text-xs uppercase tracking-[0.2em] text-[#fc5e5f] font-medium mb-3">Encuentra tu producto ideal</p>
           <h2 className="text-4xl font-bold text-[#003b72] mb-3" style={{ fontFamily: "Outfit, sans-serif" }}>¿Qué producto necesito?</h2>
           <p className="text-gray-500">Responde 3 preguntas y te recomendamos el producto ideal. <span className="text-gray-400 text-sm">(opcional)</span></p>
-        </div>
-        <ProductQuiz onContact={openDemo} />
-      </div>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <ProductQuiz onContact={openDemo} />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

@@ -159,10 +159,13 @@ export default function Navbar() {
             Productos <ChevronDown size={13} className={`transition-transform duration-200 ${openMenu === "productos" ? "rotate-180" : ""}`} />
           </button>
           <button onClick={() => scrollToSection("quiz")} className="px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap text-gray-600 hover:text-[#003b72] hover:bg-gray-50" data-testid="nav-quiz-btn">¿Qué producto necesito?</button>
+          <Link to="/responsabilidad-social" className={`px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${location.pathname === "/responsabilidad-social" ? "text-[#00a66d] bg-[#00a66d]/5" : "text-gray-600 hover:text-[#00a66d] hover:bg-[#00a66d]/5"}`} data-testid="nav-link-rsc">
+            <span className="w-2 h-2 rounded-full bg-[#00a66d] inline-block" /> Resp. Social
+          </Link>
         </nav>
 
         <div className="hidden xl:flex items-center gap-3">
-          <button onClick={openDemo} className="px-5 py-2.5 bg-[#fc5e5f] text-white rounded-full text-sm font-semibold hover:bg-[#e04e4f] transition-all hover:-translate-y-0.5 shadow-md shadow-[#fc5e5f]/20 whitespace-nowrap" data-testid="nav-contact-btn">Contáctanos</button>
+          <button onClick={openDemo} className="btn-nav-aurora px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap" data-testid="nav-contact-btn">Contáctanos</button>
         </div>
         <button className="xl:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onClick={() => setMobileOpen(!mobileOpen)} data-testid="mobile-menu-btn">
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}

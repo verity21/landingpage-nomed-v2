@@ -23,6 +23,8 @@ import WebMobilePage from "@/pages/WebMobilePage";
 import DataPage from "@/pages/DataPage";
 import TransformacionPage from "@/pages/TransformacionPage";
 
+import ResponsabilidadSocialPage from "@/pages/ResponsabilidadSocialPage";
+
 const DETAIL_PATHS = [
   "/productos/botbee", "/productos/cert", "/productos/blog-ia",
   "/estudiantes-digitales/ed-master", "/estudiantes-digitales/ed-teach", "/estudiantes-digitales/ed-math",
@@ -63,7 +65,7 @@ function App() {
               <Route path="/servicios/web-mobile" element={<WebMobilePage />} />
               <Route path="/servicios/data-analytics" element={<DataPage />} />
               <Route path="/servicios/transformacion-digital" element={<TransformacionPage />} />
-              <Route path="/nosotros" element={<Navigate to="/equipo" replace />} />
+              <Route path="/responsabilidad-social" element={<ResponsabilidadSocialPage />} />
               <Route path="/que-producto-necesito" element={<Navigate to="/" replace />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
