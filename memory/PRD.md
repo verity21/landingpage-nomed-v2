@@ -70,7 +70,10 @@ Diseño web completo para Nomed, empresa de tecnología con IA con sede en Santi
 - ProductQuiz.jsx como componente reutilizable
 - Tests: Backend 100%, Frontend 100% (14/14)
 
-### Iteración 4 (Feb 2026) — Rediseño mayor + páginas individuales de producto
+### Iteración 5 (Feb 2026) — Mega-menú estilo AWS + ajustes tipográficos
+- **Navbar**: Mega-menú en "Productos ↓" con panel lateral izquierdo (Productos Corporativos / Nuestras ED Tech) y grid de 3 productos a la derecha + link "Ver todos" + botón X. Funciona en mobile como lista expandida. 
+- **HomePage**: Títulos NOSOTROS y ¿CÓMO TRABAJAMOS? ajustados a `text-4xl lg:text-5xl` (igual que "Desarrollo de software a medida")
+- Tests: Smoke test visual ✅
 - **Navbar**: Eliminada pestaña "Tecnología", agregados "Nosotros" y "Servicios" que scrollean al home
 - **HomePage**: Títulos NOSOTROS y ¿CÓMO TRABAJAMOS? en h1 size; sección SERVICIOS reemplaza TECNOLOGÍA (fondo blanco, layout 2 col + 4 service cards); título Herramientas más grande; botón Equipo prominente
 - **Footer**: Simplificado a logo + email + Santiago, Chile + copyright (sin columnas de productos/empresa/tecnología)

@@ -128,7 +128,7 @@ function NosotrosSection() {
     <section className="py-20 bg-white" id="nosotros">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12">
-          <h2 className="text-5xl lg:text-6xl font-bold text-[#003b72] mb-4 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
+          <h2 className="text-4xl lg:text-5xl font-bold text-[#003b72] mb-4 leading-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
             NOSOTROS
           </h2>
           <p className="text-xl text-gray-600 leading-relaxed max-w-2xl">
@@ -176,7 +176,7 @@ function NosotrosSection() {
 
         {/* Timeline */}
         <div className="mb-8">
-          <h2 className="text-5xl lg:text-6xl font-bold text-[#003b72]" style={{ fontFamily: "Outfit, sans-serif" }}>¿CÓMO TRABAJAMOS?</h2>
+          <h2 className="text-4xl lg:text-5xl font-bold text-[#003b72]" style={{ fontFamily: "Outfit, sans-serif" }}>¿CÓMO TRABAJAMOS?</h2>
         </div>
 
         {/* Desktop timeline */}
