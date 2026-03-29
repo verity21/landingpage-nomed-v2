@@ -16,15 +16,23 @@ import BlogIAPage from "@/pages/BlogIAPage";
 import EDMasterPage from "@/pages/EDMasterPage";
 import EDTeachPage from "@/pages/EDTeachPage";
 import EDMathPage from "@/pages/EDMathPage";
+import IAPage from "@/pages/IAPage";
+import AutomatizacionPage from "@/pages/AutomatizacionPage";
+import IntegracionesPage from "@/pages/IntegracionesPage";
+import WebMobilePage from "@/pages/WebMobilePage";
+import DataPage from "@/pages/DataPage";
+import TransformacionPage from "@/pages/TransformacionPage";
 
-const PRODUCT_DETAIL_PATHS = [
+const DETAIL_PATHS = [
   "/productos/botbee", "/productos/cert", "/productos/blog-ia",
   "/estudiantes-digitales/ed-master", "/estudiantes-digitales/ed-teach", "/estudiantes-digitales/ed-math",
+  "/servicios/ia-aplicada", "/servicios/automatizacion", "/servicios/integraciones",
+  "/servicios/web-mobile", "/servicios/data-analytics", "/servicios/transformacion-digital",
 ];
 
 function NavbarWrapper() {
   const location = useLocation();
-  const isDetail = PRODUCT_DETAIL_PATHS.some((p) => location.pathname === p);
+  const isDetail = DETAIL_PATHS.some((p) => location.pathname === p);
   if (isDetail) return null;
   return <Navbar />;
 }
@@ -49,6 +57,12 @@ function App() {
               <Route path="/estudiantes-digitales/ed-master" element={<EDMasterPage />} />
               <Route path="/estudiantes-digitales/ed-teach" element={<EDTeachPage />} />
               <Route path="/estudiantes-digitales/ed-math" element={<EDMathPage />} />
+              <Route path="/servicios/ia-aplicada" element={<IAPage />} />
+              <Route path="/servicios/automatizacion" element={<AutomatizacionPage />} />
+              <Route path="/servicios/integraciones" element={<IntegracionesPage />} />
+              <Route path="/servicios/web-mobile" element={<WebMobilePage />} />
+              <Route path="/servicios/data-analytics" element={<DataPage />} />
+              <Route path="/servicios/transformacion-digital" element={<TransformacionPage />} />
               <Route path="/nosotros" element={<Navigate to="/equipo" replace />} />
               <Route path="/que-producto-necesito" element={<Navigate to="/" replace />} />
               <Route path="*" element={<Navigate to="/" replace />} />

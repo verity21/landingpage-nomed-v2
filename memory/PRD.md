@@ -70,7 +70,11 @@ Diseño web completo para Nomed, empresa de tecnología con IA con sede en Santi
 - ProductQuiz.jsx como componente reutilizable
 - Tests: Backend 100%, Frontend 100% (14/14)
 
-### Iteración 5 (Feb 2026) — Mega-menú estilo AWS + ajustes tipográficos
+### Iteración 6 (Feb 2026) — Mega-menú Servicios + 6 páginas de servicio
+- **Navbar Servicios**: Mega-menú idéntico al de Productos. Click en "Servicios ↓" abre panel con 2 categorías: "Desarrollo & Conexión" (Web & Mobile, Integraciones, Automatización) y "IA & Estrategia" (IA Aplicada, Data & Analytics, Transformación Digital)
+- **6 páginas de servicio** (sin navbar, topbar mínimo): /servicios/ia-aplicada, /servicios/automatizacion, /servicios/integraciones, /servicios/web-mobile, /servicios/data-analytics, /servicios/transformacion-digital — con hero, features, beneficios y CTA
+- **App.js**: 12 rutas de detalle (6 prod + 6 serv) excluidas del navbar global
+- Tests: Smoke test visual ✅
 - **Navbar**: Mega-menú en "Productos ↓" con panel lateral izquierdo (Productos Corporativos / Nuestras ED Tech) y grid de 3 productos a la derecha + link "Ver todos" + botón X. Funciona en mobile como lista expandida. 
 - **HomePage**: Títulos NOSOTROS y ¿CÓMO TRABAJAMOS? ajustados a `text-4xl lg:text-5xl` (igual que "Desarrollo de software a medida")
 - Tests: Smoke test visual ✅
