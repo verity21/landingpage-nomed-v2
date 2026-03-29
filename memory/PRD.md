@@ -70,7 +70,15 @@ Diseño web completo para Nomed, empresa de tecnología con IA con sede en Santi
 - ProductQuiz.jsx como componente reutilizable
 - Tests: Backend 100%, Frontend 100% (14/14)
 
-### Iteración 3 (Feb 2026) — Paleta ED + Anclas + Limpieza routing
+### Iteración 4 (Feb 2026) — Rediseño mayor + páginas individuales de producto
+- **Navbar**: Eliminada pestaña "Tecnología", agregados "Nosotros" y "Servicios" que scrollean al home
+- **HomePage**: Títulos NOSOTROS y ¿CÓMO TRABAJAMOS? en h1 size; sección SERVICIOS reemplaza TECNOLOGÍA (fondo blanco, layout 2 col + 4 service cards); título Herramientas más grande; botón Equipo prominente
+- **Footer**: Simplificado a logo + email + Santiago, Chile + copyright (sin columnas de productos/empresa/tecnología)
+- **EquipoPage**: Redesign con sección "Nuestro propósito" y descripción del equipo; cards con foto/avatar
+- **6 páginas individuales de producto** (SIN navbar, topbar mínimo): /productos/botbee, /productos/cert, /productos/blog-ia, /estudiantes-digitales/ed-master, /estudiantes-digitales/ed-teach, /estudiantes-digitales/ed-math — con contenido completo del PDF
+- **Quiz**: Opciones con colores distintos, contenedor con gradiente suave
+- **Links**: "Ver más" en todas partes → páginas individuales (no anclas)
+- Tests: 100% frontend (20/20)
 - EstudiantesDigitalesPage: paleta exacta (#2B7F87, #65B4B8, #CEE5D1, #F3EEEC, #FF7878), badge "Nuestras ED Tech", H1 sin "Nomed &"
 - Anclas id="ed-master/ed-teach/ed-math" y id="botbee/cert/blog" funcionales
 - Navbar: "Equipo" en lugar de "Nosotros" ✓ | Timeline "Cómo trabajamos" ✓ | Banderas de países ✓
