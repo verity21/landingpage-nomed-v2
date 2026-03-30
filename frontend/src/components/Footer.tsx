@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { MapPin, Mail } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 
 const NomedLogo = () => (
-  <div className="flex items-center gap-0.5 font-bold text-2xl">
-    <span style={{ background: "linear-gradient(135deg, #fc5e5f, #e8902f, #009ee7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontFamily: "Outfit, sans-serif" }}>N</span>
-    <span style={{ color: "white", fontFamily: "Outfit, sans-serif" }}>omed</span>
+  <div className="flex items-center gap-2">
+    <BrandLogo className="h-9 w-auto" />
   </div>
 );
 

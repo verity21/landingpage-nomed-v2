@@ -31,8 +31,8 @@ export default function BotbeePage() {
           <span style={{ background: "linear-gradient(135deg, #fc5e5f, #e8902f, #009ee7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontFamily: "Outfit, sans-serif" }}>N</span>
           <span style={{ color: "#003b72", fontFamily: "Outfit, sans-serif" }}>omed</span>
         </Link>
-        <Link to="/productos" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#003b72] transition-colors" data-testid="product-back-btn">
-          <ArrowLeft size={15} /> Volver a Productos
+        <Link to="/" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#003b72] transition-colors" data-testid="product-back-btn">
+          <ArrowLeft size={15} /> Volver al inicio
         </Link>
       </div>
 

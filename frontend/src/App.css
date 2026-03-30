@@ -1,3 +1,136 @@
+/* ============================================
+   HERO — CIRCUIT BACKGROUND & GLASS CARDS
+   ============================================ */
+
+/* SVG circuit flow animations */
+@keyframes heroFlow  { to { stroke-dashoffset: -200; } }
+@keyframes heroFlow2 { to { stroke-dashoffset: -300; } }
+@keyframes heroFlow3 { to { stroke-dashoffset: -200; } }
+
+.hero-fp  { stroke-dasharray: 8 120; animation: heroFlow  2.5s linear infinite; }
+.hero-fp2 { stroke-dasharray: 8 160; animation: heroFlow2 3.2s linear infinite; }
+.hero-fp3 { stroke-dasharray: 6 200; animation: heroFlow3 4s   linear infinite 1s; }
+
+/* Node glow animations */
+@keyframes heroNodeGlow  { 0%,100%{r:3;  opacity:.2 } 50%{r:4.5;opacity:.6 } }
+@keyframes heroNodeGlow2 { 0%,100%{r:2;  opacity:.15} 50%{r:3.5;opacity:.5 } }
+@keyframes heroNodeGlow3 { 0%,100%{r:2.5;opacity:.15} 50%{r:4;  opacity:.55} }
+
+.hero-nd  { animation: heroNodeGlow  2s   ease-in-out infinite; }
+.hero-nd2 { animation: heroNodeGlow2 2.5s ease-in-out infinite .5s; }
+.hero-nd3 { animation: heroNodeGlow3 3s   ease-in-out infinite 1.2s; }
+
+/* Badge pulse */
+@keyframes heroBadgePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(249,115,22,.2); }
+  50%      { box-shadow: 0 0 10px 3px rgba(249,115,22,.1); }
+}
+
+.hero-badge {
+  background: rgba(249,115,22,.07);
+  border: 1px solid rgba(249,115,22,.2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  animation: heroBadgePulse 3s ease infinite;
+}
+
+/* Floating card animations */
+@keyframes heroFloat1 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-6px)} }
+@keyframes heroFloat2 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-5px)} }
+@keyframes heroFloat3 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-7px)} }
+
+/* Aurora override for hero — full brand palette */
+.hero-aurora-brand {
+  background-image: linear-gradient(
+    120deg, #003b72 0%, #fc5e5f 28%, #e8902f 55%, #009ee7 78%, #003b72 100%
+  ) !important;
+  background-size: 260% 100% !important;
+}
+
+/* ============================================
+   SERVICE CARDS — 3D flip
+   ============================================ */
+.flip-card {
+  perspective: 900px;
+  min-height: 160px;
+  cursor: default;
+}
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(.16,1,.3,1);
+}
+.flip-card:hover .flip-inner {
+  transform: rotateY(180deg);
+}
+.flip-front,
+.flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+.flip-front {
+  border-width: 2px !important;
+  border-style: solid !important;
+  background: #ffffff;
+}
+.flip-back {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #ffffff;
+}
+
+/* ============================================
+   TIMELINE — animated gradient line
+   ============================================ */
+@keyframes timelineGradient {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.timeline-line-animated {
+  background: linear-gradient(90deg, #fc5e5f, #e8902f, #009ee7, #003b72, #fc5e5f);
+  background-size: 300% 100%;
+  animation: timelineGradient 4s ease infinite;
+}
+
+/* Wave section dividers */
+.section-wave-bottom {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  line-height: 0;
+  pointer-events: none;
+}
+.section-wave-bottom svg {
+  display: block;
+  width: 100%;
+}
+
+/* Glass card base */
+.hero-glass-card {
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.55);
+  border-radius: 16px;
+  padding: 18px;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* ============================================
+   MARQUEE ANIMATION */
 /* Marquee animation */
 @keyframes marquee {
     0% { transform: translateX(0); }
@@ -93,14 +226,14 @@ html {
     filter: blur(28px);
 }
 
-/* Nav CTA button — crisp brand style without heavy blur */
+/* Nav CTA button — brand sky blue */
 .btn-nav-aurora {
     position: relative;
     z-index: 0;
-    background: linear-gradient(135deg, #0f172a, #111827) !important;
+    background: #009ee7 !important;
     color: #fff !important;
     border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow: 0 8px 22px rgba(2, 6, 23, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    box-shadow: 0 6px 18px rgba(0, 158, 231, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.15);
     overflow: hidden !important;
     transition: transform 0.25s cubic-bezier(.16,1,.3,1), box-shadow 0.25s ease, border-color 0.25s ease !important;
 }
@@ -117,7 +250,7 @@ html {
 .btn-nav-aurora:hover {
     transform: translateY(-1px) scale(1.02) !important;
     border-color: rgba(255, 255, 255, 0.26);
-    box-shadow: 0 12px 26px rgba(2, 6, 23, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 24px rgba(0, 158, 231, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 .btn-nav-aurora:hover::before {
     opacity: 1;
@@ -145,6 +278,62 @@ html {
 
 /* Stagger helpers */
 .delay-100 { animation-delay: 0.1s; }
+
+/* ============================================
+   TOPBAR LOGO + GLOBAL BACK BUTTONS
+   ============================================ */
+[data-testid="product-logo"],
+[data-testid="service-logo"],
+[data-testid="nav-logo"] {
+    font-size: 1rem !important;
+    line-height: 1 !important;
+}
+
+[data-testid="product-logo"] span:last-child,
+[data-testid="service-logo"] span:last-child {
+    font-size: 1.02rem !important;
+    line-height: 1 !important;
+}
+
+[data-testid="service-back-btn"],
+[data-testid="product-back-btn"] {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.45rem !important;
+    border: 1px solid #009ee7 !important;
+    color: #009ee7 !important;
+    background: #ffffff !important;
+    border-radius: 999px !important;
+    padding: 0.38rem 0.85rem !important;
+    font-weight: 600 !important;
+    line-height: 1.1 !important;
+    text-decoration: none !important;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+[data-testid="service-back-btn"]:hover,
+[data-testid="product-back-btn"]:hover {
+    background: #009ee7 !important;
+    color: #ffffff !important;
+    border-color: #009ee7 !important;
+}
+
+[data-testid="service-topbar"] > a:first-child,
+[data-testid="product-topbar"] > a:first-child {
+    display: inline-block !important;
+    width: 190px;
+    height: 44px;
+    background-image: url("../media/Logo Nomed AI Driven Tech solo (2).png");
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: contain;
+    line-height: 0;
+}
+
+[data-testid="service-topbar"] > a:first-child span,
+[data-testid="product-topbar"] > a:first-child span {
+    display: none !important;
+}
 .delay-200 { animation-delay: 0.2s; }
 .delay-300 { animation-delay: 0.3s; }
 .delay-400 { animation-delay: 0.4s; }
@@ -206,6 +395,45 @@ html {
 }
 .link-underline:hover::after {
     width: 100%;
+}
+
+/* ============================================
+   NAV LED + AURORA ACTIVE TAB
+   ============================================ */
+.nav-led-item .nav-led-line {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: -2px;
+    height: 2px;
+    border-radius: 999px;
+    background: #009ee7;
+    box-shadow: 0 0 6px rgba(0, 158, 231, 0.72);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.24s cubic-bezier(.16,1,.3,1);
+}
+
+.nav-led-item:hover .nav-led-line,
+.nav-led-item.nav-led-active .nav-led-line {
+    transform: scaleX(1);
+}
+
+.nav-led-item .nav-led-label {
+    transition: color 0.2s ease;
+}
+
+.nav-led-item.nav-led-active .nav-led-label {
+    font-weight: 700;
+    background-image: linear-gradient(120deg, #003b72 0%, #fc5e5f 30%, #e8902f 55%, #009ee7 78%, #003b72 100%);
+    background-size: 240% 100%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    animation: aurora-text-shift 4.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(0, 158, 231, 0.22));
 }
 
 /* ============================================
@@ -304,7 +532,7 @@ html {
 .hero-cta-btn-primary {
     color: #fff;
     background: linear-gradient(135deg, #fc5e5f 0%, #e8902f 100%);
-    box-shadow: 0 18px 34px rgba(252, 94, 95, 0.38), 0 0 30px rgba(232, 144, 47, 0.24);
+    box-shadow: none;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
 }
 
@@ -314,7 +542,7 @@ html {
 }
 
 .hero-cta-btn-primary:hover {
-    box-shadow: 0 24px 44px rgba(252, 94, 95, 0.44), 0 0 40px rgba(232, 144, 47, 0.3);
+    box-shadow: none;
 }
 
 .hero-cta-btn-ghost {
@@ -331,7 +559,7 @@ html {
 
 .hero-cta-btn-ghost:hover {
     border-color: rgba(170, 229, 255, 0.96);
-    box-shadow: 0 22px 40px rgba(0, 158, 231, 0.38), 0 0 42px rgba(114, 203, 255, 0.42);
+    box-shadow: 0 8px 20px rgba(0, 158, 231, 0.12);
 }
 
 html.dark .hero-cta-btn-ghost {
@@ -355,16 +583,18 @@ html.dark .hero-cta-btn-ghost .hero-cta-btn-icon {
     border-radius: 1rem;
     border: 1px solid color-mix(in srgb, var(--dream-accent) 28%, #dbe7ff 72%);
     background: linear-gradient(145deg, #ffffff 0%, #eef6ff 100%);
-    min-height: 170px;
+    min-height: 142px;
     box-shadow: 0 16px 34px -16px var(--dream-glow), 0 10px 24px rgba(15, 23, 42, 0.12);
 }
 
 .hero-dream-card-bg {
     position: absolute;
     inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.16;
+    background:
+        radial-gradient(circle at 85% 18%, color-mix(in srgb, var(--dream-accent) 24%, transparent) 0%, transparent 48%),
+        radial-gradient(circle at 14% 86%, color-mix(in srgb, var(--dream-accent) 18%, transparent) 0%, transparent 46%),
+        linear-gradient(145deg, color-mix(in srgb, var(--dream-accent) 8%, #ffffff 92%) 0%, #f8fbff 100%);
+    opacity: 0.9;
     transform: scale(1.08);
     transition: opacity 0.38s ease, transform 0.38s ease;
 }
@@ -382,10 +612,20 @@ html.dark .hero-cta-btn-ghost .hero-cta-btn-icon {
     z-index: 2;
 }
 
+.hero-dream-card-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.55rem;
+}
+
 .hero-dream-card-title {
     margin-top: 0;
-    margin-bottom: 0.35rem;
-    font-size: 1.9rem;
+    margin-bottom: 0.15rem;
+    font-size: 1.35rem;
     line-height: 1.05;
     color: #07386e;
     font-weight: 700;
@@ -394,14 +634,38 @@ html.dark .hero-cta-btn-ghost .hero-cta-btn-icon {
 
 .hero-dream-card-text {
     margin: 0;
-    color: rgba(15, 23, 42, 0.82);
-    font-size: 0.94rem;
+    color: rgba(15, 23, 42, 0.75);
+    font-size: 0.8rem;
     line-height: 1.35;
-    max-width: 20ch;
+    max-width: 30ch;
+}
+
+.hero-dream-card-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.55rem;
+}
+
+.hero-dream-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    border-radius: 999px;
+    padding: 0.16rem 0.42rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: color-mix(in srgb, var(--dream-accent) 80%, #1f2c3c 20%);
+    background: color-mix(in srgb, var(--dream-accent) 16%, #ffffff 84%);
+}
+
+.hero-dream-chip svg {
+    width: 0.62rem;
+    height: 0.62rem;
 }
 
 .hero-dream-card:hover .hero-dream-card-bg {
-    opacity: 0.68;
+    opacity: 1;
     transform: scale(1);
 }
 
@@ -411,6 +675,54 @@ html.dark .hero-cta-btn-ghost .hero-cta-btn-icon {
 
 .hero-dream-card:hover {
     box-shadow: 0 24px 44px -18px var(--dream-glow), 0 14px 28px rgba(15, 23, 42, 0.16);
+}
+
+html.dark #inicio {
+    background: #003b72;
+}
+
+html.dark .hero-main-title,
+html.dark .hero-main-title .aurora-text,
+html.dark .hero-main-subtitle,
+html.dark .hero-presence-label,
+html.dark .hero-presence-country {
+    color: #ffffff !important;
+}
+
+html.dark #inicio .hero-dream-card {
+    border-color: color-mix(in srgb, var(--dream-accent) 45%, #ffffff 55%);
+    background: linear-gradient(145deg, rgba(6, 36, 68, 0.9) 0%, rgba(4, 28, 52, 0.95) 100%);
+}
+
+html.dark #inicio .hero-dream-card-bg {
+    background:
+        radial-gradient(circle at 85% 18%, color-mix(in srgb, var(--dream-accent) 32%, transparent) 0%, transparent 50%),
+        radial-gradient(circle at 14% 86%, color-mix(in srgb, var(--dream-accent) 24%, transparent) 0%, transparent 48%),
+        linear-gradient(145deg, rgba(10, 48, 90, 0.85) 0%, rgba(8, 39, 74, 0.95) 100%);
+}
+
+html.dark #inicio .hero-dream-card-overlay {
+    background: linear-gradient(165deg, rgba(1, 14, 28, 0.34), rgba(1, 14, 28, 0.48));
+}
+
+html.dark #inicio .hero-dream-card-title,
+html.dark #inicio .hero-dream-chip {
+    color: #ffffff;
+    text-shadow: none;
+}
+
+html.dark #inicio .hero-dream-card-text {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+html.dark #inicio .hero-dream-chip {
+    background: color-mix(in srgb, var(--dream-accent) 26%, transparent);
+    border: 1px solid color-mix(in srgb, var(--dream-accent) 44%, transparent);
+}
+
+html.dark #inicio .hero-dream-card-title {
+    color: #ffffff;
+    text-shadow: none;
 }
 
 .rocket-sparkle {

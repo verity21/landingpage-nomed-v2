@@ -4,6 +4,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { useDemo } from "@/contexts/DemoContext";
 import axios from "axios";
 import { Clock, Video, MapPin, ChevronLeft, Check } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 import type { DemoFormState } from "@/types";
 
 const API = `/api`;
@@ -49,8 +50,7 @@ function LeftPanel({ selectedDate, selectedTime }: LeftPanelProps) {
   return (
     <div className="bg-[#003b72] text-white p-8 flex flex-col gap-6 w-60 min-w-[220px] shrink-0">
       <div className="text-2xl font-bold flex items-center gap-0.5" style={{ fontFamily: "Outfit, sans-serif" }}>
-        <span style={{ background: "linear-gradient(135deg, #fc5e5f, #e8902f, #009ee7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>N</span>
-        <span>omed</span>
+        <BrandLogo className="h-9 w-auto" />
       </div>
 
       <div>

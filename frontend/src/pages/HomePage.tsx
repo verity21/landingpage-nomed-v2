@@ -1,9 +1,8 @@
 // @ts-nocheck
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDemo } from "@/contexts/DemoContext";
-import { motion, AnimatePresence } from "framer-motion";
-import lottie from "lottie-web";
+import { motion } from "framer-motion";
 import ProductQuiz from "@/components/ProductQuiz";
 import { AuroraText } from "@/registry/magicui/aurora-text";
 import axios from "axios";
@@ -25,701 +24,220 @@ const stagger = {
 
 const API = `/api`;
 
-const ROCKET_VIEWBOX = { width: 360, height: 560 };
-const ROCKET_PATH_D = "M 10 520 C 80 440, 120 350, 150 270 S 200 140, 252 30";
-const ROCKET_DURATION = 4000;
-const ROCKET_SIZE = 80;
-const ROCKET_LOCAL_PATH = new URL("../../media/ejemplouykgk.json", import.meta.url).href;
-
-const ROCKET_MILESTONES = [
+const HERO_DREAM_CARDS = [
   {
-    t: 0.15,
-    label: "EL DESPEGUE",
-    word: "Sueña",
-    desc: "Visualiza el futuro que quieres construir.",
-    color: "#E8A54B",
+    icon: <BrainCircuit size={16} />,
+    iconBg: "#f5616615",
+    title: "Especialidad en IA",
+    text: "Soluciones a medida impulsadas por inteligencia artificial",
+    accent: "#f56166",
+    glow: "rgba(245, 97, 102, 0.34)",
   },
   {
-    t: 0.5,
-    label: "EL CAMINO",
-    word: "Aprende",
-    desc: "Convierte curiosidad en conocimiento aplicable.",
-    color: "#378ADD",
+    icon: <Package size={16} />,
+    iconBg: "#1f9bd715",
+    title: "Productos Corporativos",
+    chips: [
+      { label: "Botbee", icon: <Bot size={12} /> },
+      { label: "Cert", icon: <Award size={12} /> },
+      { label: "Blog", icon: <PenSquare size={12} /> },
+    ],
+    accent: "#1f9bd7",
+    glow: "rgba(31, 155, 215, 0.34)",
   },
   {
-    t: 0.88,
-    label: "LA META",
-    word: "Hazlo realidad",
-    desc: "Lleva tus ideas a resultados concretos.",
-    color: "#1D9E75",
+    icon: <GraduationCap size={16} />,
+    iconBg: "#e58f3515",
+    title: "Productos ED Tech",
+    chips: [{ label: "ED Teach" }, { label: "ED Math" }, { label: "ED Master" }],
+    accent: "#e58f35",
+    glow: "rgba(229, 143, 53, 0.34)",
   },
 ];
-
-const SPARKLE_COLORS = ["#E8A54B", "#378ADD", "#1D9E75", "#DDE1E8"];
-const TRAIL_COLORS = ["#E8A54B", "#378ADD", "#1D9E75"];
-
-function easeInOut(t) {
-  return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-}
-
-function RocketJourney() {
-  const containerRef = useRef(null);
-  const svgPathRef = useRef(null);
-  const trailPathRef = useRef(null);
-  const rocketRef = useRef(null);
-  const lottieRef = useRef(null);
-  const rafRef = useRef(0);
-  const runningRef = useRef(false);
-  const replayTimerRef = useRef(0);
-  const lottieInstanceRef = useRef(null);
-
-  const [progress, setProgress] = useState(0);
-  const [clock, setClock] = useState(0);
-  const [showReplay, setShowReplay] = useState(false);
-  const [containerSize, setContainerSize] = useState({ width: 360, height: 440 });
-  const [particles, setParticles] = useState([]);
-
-  const sparkles = useMemo(
-    () =>
-      Array.from({ length: 18 }, (_, i) => {
-        const seed = i * 37.17;
-        return {
-          id: i,
-          left: 6 + ((Math.sin(seed) + 1) * 0.5) * 88,
-          top: 4 + ((Math.cos(seed * 0.7) + 1) * 0.5) * 90,
-          size: 2 + (i % 3),
-          color: SPARKLE_COLORS[i % SPARKLE_COLORS.length],
-          delay: -((i * 0.31) % 2.5),
-          duration: 2.2 + ((i * 0.41) % 2.8),
-        };
-      }),
-    []
-  );
-
-  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-
-  const getPointOnPath = (t) => {
-    const pathEl = svgPathRef.current;
-    const host = containerRef.current;
-    if (!pathEl || !host) {
-      return { x: 0, y: 0 };
-    }
-
-    const totalLen = pathEl.getTotalLength();
-    const pt = pathEl.getPointAtLength(clamp(t, 0, 1) * totalLen);
-    const rect = host.getBoundingClientRect();
-
-    return {
-      x: (pt.x / ROCKET_VIEWBOX.width) * rect.width,
-      y: (pt.y / ROCKET_VIEWBOX.height) * rect.height,
-    };
-  };
-
-  const updateTrail = (t) => {
-    const pathEl = svgPathRef.current;
-    const trailEl = trailPathRef.current;
-    if (!pathEl || !trailEl) {
-      return;
-    }
-    const totalLen = pathEl.getTotalLength();
-    trailEl.style.strokeDasharray = `${t * totalLen} ${totalLen}`;
-  };
-
-  const updateRocketTransform = (t) => {
-    const rocketEl = rocketRef.current;
-    if (!rocketEl) {
-      return;
-    }
-
-    const ptCurrent = getPointOnPath(t);
-    const ptNext = getPointOnPath(Math.min(t + 0.01, 1));
-    const angle = (Math.atan2(ptNext.y - ptCurrent.y, ptNext.x - ptCurrent.x) * 180) / Math.PI;
-
-    // The lottie rocket base orientation is vertical, so we offset +90deg
-    // to match the tangent direction of the ascending path.
-    rocketEl.style.transform = `translate(${ptCurrent.x - ROCKET_SIZE / 2}px, ${ptCurrent.y - ROCKET_SIZE / 2}px) rotate(${angle + 90}deg)`;
-  };
-
-  const emitParticle = (t, now) => {
-    const phaseColor = t < 0.33 ? TRAIL_COLORS[0] : t < 0.66 ? TRAIL_COLORS[1] : TRAIL_COLORS[2];
-    const point = getPointOnPath(t);
-    const id = now + Math.random();
-
-    setParticles((prev) => {
-      const next = [
-        ...prev,
-        {
-          id,
-          x: point.x - 6 + Math.random() * 12,
-          y: point.y - 6 + Math.random() * 12,
-          color: phaseColor,
-          bornAt: now,
-          duration: 520 + Math.random() * 280,
-          size: 3 + Math.random() * 3,
-        },
-      ];
-
-      return next.slice(-55);
-    });
-  };
-
-  const runRocketJourney = () => {
-    const host = containerRef.current;
-    if (!host || runningRef.current) {
-      return;
-    }
-
-    runningRef.current = true;
-    setShowReplay(false);
-    setParticles([]);
-    setProgress(0);
-    updateRocketTransform(0);
-    updateTrail(0);
-
-    const startedAt = performance.now();
-
-    const frame = (now) => {
-      const elapsed = now - startedAt;
-      const delayed = elapsed - 400;
-      if (delayed < 0) {
-        rafRef.current = requestAnimationFrame(frame);
-        return;
-      }
-
-      const tRaw = clamp(delayed / ROCKET_DURATION, 0, 1);
-      const eased = easeInOut(tRaw);
-
-      setClock(now);
-      setProgress(eased);
-      updateRocketTransform(eased);
-      updateTrail(eased);
-      emitParticle(eased, now);
-
-      setParticles((prev) => prev.filter((p) => now - p.bornAt < p.duration));
-
-      if (tRaw < 1) {
-        rafRef.current = requestAnimationFrame(frame);
-      } else {
-        runningRef.current = false;
-        replayTimerRef.current = window.setTimeout(() => {
-          setShowReplay(true);
-        }, 500);
-      }
-    };
-
-    rafRef.current = requestAnimationFrame(frame);
-  };
-
-  const handleReplay = () => {
-    cancelAnimationFrame(rafRef.current);
-    clearTimeout(replayTimerRef.current);
-    runRocketJourney();
-  };
-
-  useEffect(() => {
-    if (!lottieRef.current || lottieInstanceRef.current) {
-      return;
-    }
-
-    lottieInstanceRef.current = lottie.loadAnimation({
-      container: lottieRef.current,
-      renderer: "svg",
-      loop: true,
-      autoplay: true,
-      path: ROCKET_LOCAL_PATH,
-    });
-
-    return () => {
-      if (lottieInstanceRef.current) {
-        lottieInstanceRef.current.destroy();
-        lottieInstanceRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const host = containerRef.current;
-    if (!host) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
-            runRocketJourney();
-          }
-        });
-      },
-      { threshold: [0, 0.3, 1] }
-    );
-
-    observer.observe(host);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    const host = containerRef.current;
-    if (!host) {
-      return;
-    }
-
-    const updateSize = () => {
-      const rect = host.getBoundingClientRect();
-      setContainerSize({ width: rect.width || 360, height: rect.height || 440 });
-      updateRocketTransform(progress);
-      updateTrail(progress);
-    };
-
-    updateSize();
-
-    const observer = new ResizeObserver(updateSize);
-    observer.observe(host);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [progress]);
-
-  useEffect(() => {
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      clearTimeout(replayTimerRef.current);
-    };
-  }, []);
-
-  const milestoneDots = ROCKET_MILESTONES.map((m) => ({ ...m, point: getPointOnPath(m.t) }));
-
-  return (
-    <div ref={containerRef} className="relative w-full h-[500px] overflow-hidden" style={{ isolation: "isolate" }}>
-      <svg
-        className="absolute inset-0 pointer-events-none"
-        viewBox={`0 0 ${ROCKET_VIEWBOX.width} ${ROCKET_VIEWBOX.height}`}
-        preserveAspectRatio="none"
-        style={{ width: "100%", height: "100%" }}
-      >
-        <defs>
-          <linearGradient id="nomedJourneyGradient" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#E8A54B" />
-            <stop offset="48%" stopColor="#378ADD" />
-            <stop offset="100%" stopColor="#1D9E75" />
-          </linearGradient>
-        </defs>
-        <path
-          ref={svgPathRef}
-          d={ROCKET_PATH_D}
-          fill="none"
-          stroke="#E8EDF2"
-          strokeWidth="2"
-          strokeDasharray="6 6"
-        />
-        <path
-          ref={trailPathRef}
-          d={ROCKET_PATH_D}
-          fill="none"
-          stroke="url(#nomedJourneyGradient)"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeDasharray="0 9999"
-          style={{ filter: "drop-shadow(0 0 4px rgba(55,138,221,0.35))" }}
-        />
-      </svg>
-
-      {sparkles.map((s) => (
-        <span
-          key={s.id}
-          className="rocket-sparkle"
-          style={{
-            left: `${s.left}%`,
-            top: `${s.top}%`,
-            width: s.size,
-            height: s.size,
-            background: s.color,
-            opacity: 0.35,
-            animationDuration: `${s.duration}s`,
-            animationDelay: `${s.delay}s`,
-          }}
-        />
-      ))}
-
-      {particles.map((p) => {
-        const life = clamp((clock - p.bornAt) / p.duration, 0, 1);
-        return (
-          <span
-            key={p.id}
-            style={{
-              position: "absolute",
-              left: p.x,
-              top: p.y,
-              width: p.size,
-              height: p.size,
-              borderRadius: "999px",
-              pointerEvents: "none",
-              background: p.color,
-              opacity: (1 - life) * 0.46,
-              transform: `scale(${1 + life * 0.8})`,
-              filter: "blur(0.25px)",
-            }}
-          />
-        );
-      })}
-
-      <div
-        ref={rocketRef}
-        style={{
-          position: "absolute",
-          width: ROCKET_SIZE,
-          height: ROCKET_SIZE,
-          left: 0,
-          top: 0,
-          transformOrigin: "50% 50%",
-          pointerEvents: "none",
-          zIndex: 4,
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            borderRadius: "999px",
-            background: "radial-gradient(circle, rgba(55,138,221,0.26) 0%, rgba(55,138,221,0) 72%)",
-            transform: "scale(1.28)",
-            filter: "blur(4px)",
-          }}
-        />
-        <div ref={lottieRef} style={{ width: "100%", height: "100%" }} />
-      </div>
-
-      {milestoneDots.map((m, i) => {
-        const isVisible = progress >= m.t - 0.03;
-        const dotX = m.point.x;
-        const dotY = m.point.y;
-
-        const phraseX = i === 2 ? dotX + 24 : dotX + 58;
-        const phraseY = dotY - 10;
-        const safeX = clamp(phraseX, 10, containerSize.width - 220);
-        const safeY = clamp(phraseY, 10, containerSize.height - 110);
-        const imageX = dotX - 28 - 60;
-        const imageY = dotY - 30;
-
-        return (
-          <div key={m.word}>
-            <div
-              id={`img${i + 1}`}
-              className="milestone-image"
-              style={{
-                position: "absolute",
-                left: imageX,
-                top: imageY,
-                width: 60,
-                height: 60,
-                borderRadius: "50%",
-                border: `2px solid ${m.color}`,
-                background: `${m.color}14`,
-                zIndex: 6,
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? "scale(1)" : "scale(0)",
-                transition: "all 0.4s ease",
-                pointerEvents: "none",
-              }}
-            />
-
-            <span
-              style={{
-                position: "absolute",
-                left: dotX - 7,
-                top: dotY - 7,
-                width: 14,
-                height: 14,
-                borderRadius: "999px",
-                background: m.color,
-                zIndex: 3,
-                boxShadow: `0 0 0 6px ${m.color}33`,
-              }}
-            />
-            <span
-              className="rocket-milestone-ring"
-              style={{
-                left: dotX - 12,
-                top: dotY - 12,
-                borderColor: `${m.color}66`,
-                opacity: isVisible ? 1 : 0,
-              }}
-            />
-
-            <div
-              style={{
-                position: "absolute",
-                left: safeX,
-                top: safeY,
-                maxWidth: 200,
-                zIndex: 5,
-                pointerEvents: "none",
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? "translateY(0px)" : "translateY(12px)",
-                transition: "opacity 0.5s ease, transform 0.5s ease",
-              }}
-            >
-              <div style={{ fontSize: 11, letterSpacing: "2px", fontWeight: 700, color: m.color, textTransform: "uppercase" }}>
-                {m.label}
-              </div>
-              <div style={{ fontSize: 36, lineHeight: 1, letterSpacing: "-0.5px", fontWeight: 800, color: m.color, fontFamily: "Outfit, sans-serif", marginTop: 3 }}>
-                {m.word}
-              </div>
-              <div style={{ fontSize: 13, color: "#6B7B8D", marginTop: 6, maxWidth: 200, lineHeight: 1.35 }}>
-                {m.desc}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-
-      {showReplay && (
-        <button
-          type="button"
-          onClick={handleReplay}
-          style={{
-            position: "absolute",
-            right: 8,
-            bottom: 8,
-            border: "1px solid #d7dee7",
-            borderRadius: 16,
-            padding: "6px 10px",
-            fontSize: 11,
-            color: "#35506e",
-            background: "rgba(255,255,255,0.76)",
-            backdropFilter: "blur(4px)",
-            zIndex: 6,
-          }}
-        >
-          ↻ Repetir
-        </button>
-      )}
-    </div>
-  );
-}
-
-/* ---- HERO IMAGE WITH THOUGHT BUBBLE ---- */
-const HERO_IMAGE_PATH = new URL("../../media/Untitled design.png", import.meta.url).href;
-
-const BUBBLE_PHRASES = [
-  { text: "Sueña", color: "#E8A54B" },
-  { text: "Aprende", color: "#378ADD" },
-  { text: "Hazlo realidad", color: "#1D9E75" },
-];
-
-function HeroImageWithBubble() {
-  const [index, setIndex] = useState(0);
-  const [animKey, setAnimKey] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % BUBBLE_PHRASES.length);
-      setAnimKey((prev) => prev + 1);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const current = BUBBLE_PHRASES[index];
-  const words = current.text.split(" ");
-
-  return (
-    <div className="relative w-full max-w-lg mx-auto select-none">
-      {/* Thought bubble — top-right of image */}
-      <div className="absolute z-10" style={{ top: -46, right: 14, width: 210, height: 135 }}>
-        {/* SVG cloud shape */}
-        <svg
-          viewBox="0 0 210 135"
-          className="absolute inset-0 w-full h-full"
-          style={{ filter: "drop-shadow(0 6px 18px rgba(0,59,114,0.13))" }}
-        >
-          <defs>
-            <linearGradient id="bubbleGradHero" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="100%" stopColor="#f4f8fd" />
-            </linearGradient>
-            <filter id="bubbleInnerGlow" x="-10%" y="-10%" width="120%" height="120%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
-
-          {/* Cloud body — bumpy cloud path */}
-          <path
-            d="M 22 82
-               C 8 82 4 70 4 62
-               C 4 52 10 46 20 44
-               C 16 35 20 27 28 22
-               C 34 14 46 12 58 16
-               C 62 7 72 2 84 4
-               C 96 2 106 8 110 18
-               C 118 10 130 6 142 8
-               C 158 8 168 18 170 32
-               C 180 32 190 40 192 52
-               C 198 56 200 64 198 72
-               C 196 82 188 88 178 88
-               L 36 88
-               C 28 88 22 86 22 82 Z"
-            fill="url(#bubbleGradHero)"
-            stroke="#dde4ef"
-            strokeWidth="1.5"
-          />
-
-          {/* Colored accent bar at bottom edge of cloud */}
-          <motion.line
-            x1="36" y1="86" x2="178" y2="86"
-            stroke={current.color}
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            opacity="0.5"
-            key={`line-${index}`}
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.5 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          />
-
-          {/* Corner sparkle dots */}
-          <circle cx="50" cy="18" r="2.5" fill={current.color} opacity="0.35" />
-          <circle cx="160" cy="22" r="2" fill={current.color} opacity="0.25" />
-          <circle cx="170" cy="60" r="1.5" fill={current.color} opacity="0.2" />
-
-          {/* Tail bubbles */}
-          <circle cx="52" cy="100" r="7.5" fill="url(#bubbleGradHero)" stroke="#dde4ef" strokeWidth="1.5" />
-          <circle cx="42" cy="113" r="5" fill="url(#bubbleGradHero)" stroke="#dde4ef" strokeWidth="1.5" />
-          <circle cx="34" cy="123" r="3.5" fill="url(#bubbleGradHero)" stroke="#dde4ef" strokeWidth="1.5" />
-          <circle cx="27" cy="130" r="2.5" fill="url(#bubbleGradHero)" stroke="#dde4ef" strokeWidth="1.5" />
-        </svg>
-
-        {/* Animated text inside cloud */}
-        <div
-          className="absolute flex items-center justify-center"
-          style={{ top: 8, left: 10, right: 10, bottom: 36 }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={animKey}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.18 } }}
-              className="flex flex-wrap gap-x-2 justify-center items-center"
-            >
-              {words.map((word, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 18, scale: 0.85, filter: "blur(4px)" }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    filter: "blur(0px)",
-                    transition: {
-                      delay: i * 0.22,
-                      type: "spring",
-                      stiffness: 260,
-                      damping: 18,
-                    },
-                  }}
-                  style={{
-                    fontFamily: "Outfit, sans-serif",
-                    fontWeight: 800,
-                    fontSize: words.length === 1 ? 30 : 23,
-                    color: current.color,
-                    letterSpacing: "-0.4px",
-                    lineHeight: 1.1,
-                    textShadow: `0 2px 12px ${current.color}30`,
-                  }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Phrase indicator dots */}
-        <div className="absolute flex gap-1 justify-center" style={{ bottom: 4, left: 0, right: 0 }}>
-          {BUBBLE_PHRASES.map((p, i) => (
-            <motion.span
-              key={i}
-              animate={{ scale: i === index ? 1.3 : 1, opacity: i === index ? 1 : 0.35 }}
-              transition={{ duration: 0.25 }}
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "999px",
-                background: p.color,
-                display: "inline-block",
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Hero image */}
-      <img
-        src={HERO_IMAGE_PATH}
-        alt="Equipo Nomed"
-        className="w-full object-contain"
-        style={{ borderRadius: "1.5rem", marginBottom: -6 }}
-        draggable={false}
-      />
-    </div>
-  );
-}
 
 /* ---- HERO ---- */
 function HeroSection({ openDemo }) {
   return (
-    <section className="pt-28 pb-20 bg-white overflow-hidden relative" id="inicio">
-      <div className="absolute top-0 right-0 w-2/3 h-full pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-full h-full opacity-[0.04]" style={{ background: "radial-gradient(ellipse 80% 80% at 100% 10%, #009ee7, transparent)" }} />
-        <div className="absolute top-20 right-10 w-72 h-72 rounded-full opacity-[0.06]" style={{ background: "#fc5e5f", filter: "blur(60px)" }} />
-      </div>
-      <div className="max-w-7xl mx-auto px-6 relative">
-        <div className="grid lg:grid-cols-2 gap-14 items-center">
-          <motion.div initial="hidden" animate="visible" variants={stagger} className="text-left">
+    <section className="bg-white relative" id="inicio" style={{ minHeight: 520 }}>
 
-            <motion.h1 variants={fadeUp} className="text-5xl lg:text-6xl font-bold text-[#003b72] leading-tight mb-6 text-left" style={{ fontFamily: "Outfit, sans-serif" }}>
-              Construimos tecnología con <AuroraText>inteligencia artificial</AuroraText> para empresas y educación
-            </motion.h1>
-            <motion.p variants={fadeUp} className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl text-left">
-              Software a medida, productos corporativos con IA y EdTech. Transformación real en Latinoamérica.
-            </motion.p>
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-3 mb-10 justify-start">
-              <button onClick={openDemo} className="hero-cta-btn hero-cta-btn-primary" data-testid="hero-contact-btn">
-                <span className="hero-cta-btn-label">Contáctanos</span>
-                <span className="hero-cta-btn-icon"><ArrowRight size={15} /></span>
-              </button>
-              <button onClick={() => document.getElementById("servicios")?.scrollIntoView({ behavior: "smooth" })} className="hero-cta-btn hero-cta-btn-ghost" data-testid="hero-services-btn">
-                <span className="hero-cta-btn-label">Ver servicios</span>
-                <span className="hero-cta-btn-icon"><ArrowRight size={15} /></span>
-              </button>
-            </motion.div>
-            <motion.div variants={fadeUp} className="flex items-center gap-3 text-sm text-gray-400 flex-wrap justify-start">
-              <span>Presencia en</span>
-              {[
-                { country: "Chile", flagSrc: "https://flagcdn.com/w40/cl.png" },
-                { country: "México", flagSrc: "https://flagcdn.com/w40/mx.png" },
-                { country: "Perú", flagSrc: "https://flagcdn.com/w40/pe.png" },
-                { country: "Argentina", flagSrc: "https://flagcdn.com/w40/ar.png" },
-              ].map((c) => (
-                <span key={c.country} className="flex items-center gap-1 text-[#003b72] font-medium">
-                  <img src={c.flagSrc} alt={`Bandera de ${c.country}`} className="w-4 h-4 rounded-sm object-cover" loading="lazy" /> {c.country}
-                </span>
-              ))}
-            </motion.div>
+      {/* Neon circuit SVG background — clipped to section bounds */}
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+      <svg
+        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+        viewBox="0 0 900 480"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <defs>
+          <filter id="gc"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="go"><feGaussianBlur stdDeviation="2"   result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="gp"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        {/* Base lines */}
+        <g fill="none" stroke="#06b6d4" strokeWidth="0.5" opacity=".08" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="0,85 60,85 60,125 145,125 145,85 235,85 235,145 310,145"/>
+          <polyline points="0,210 82,210 82,168 178,168 178,210 258,210 258,252 338,252"/>
+          <polyline points="60,125 60,182 0,182"/>
+          <polyline points="145,125 182,125 182,85 262,85 262,145 320,145"/>
+        </g>
+        <g fill="none" stroke="#f97316" strokeWidth="0.5" opacity=".07" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="900,68 832,68 832,108 750,108 750,68 662,68 662,112 588,112 588,68 502,68 502,112 438,112"/>
+          <polyline points="900,205 842,205 842,248 766,248 766,205 688,205"/>
+          <polyline points="832,108 832,162 868,162 868,218"/>
+        </g>
+        <g fill="none" stroke="#8b5cf6" strokeWidth="0.5" opacity=".07" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="148,480 148,412 208,412 208,358 278,358 278,412 358,412 358,458"/>
+          <polyline points="900,375 822,375 822,338 742,338 742,375 678,375 678,418 608,418 608,458"/>
+          <polyline points="420,0 420,52 462,52 462,92 502,92 502,52 542,52 542,0"/>
+        </g>
+        {/* Animated cyan flow */}
+        <g filter="url(#gc)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="0,85 60,85 60,125 145,125 145,85 235,85 235,145 310,145" stroke="#0891b2" strokeWidth="1" opacity=".2"/>
+          <polyline points="0,85 60,85 60,125 145,125 145,85 235,85 235,145 310,145" className="hero-fp" stroke="#22d3ee" strokeWidth="2" opacity=".45"/>
+          <polyline points="0,210 82,210 82,168 178,168 178,210 258,210 258,252 338,252" stroke="#0891b2" strokeWidth="0.8" opacity=".15"/>
+          <polyline points="0,210 82,210 82,168 178,168 178,210 258,210 258,252 338,252" className="hero-fp2" stroke="#67e8f9" strokeWidth="1.8" opacity=".4" style={{ animationDelay: ".8s" }}/>
+        </g>
+        {/* Animated orange flow */}
+        <g filter="url(#go)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="900,68 832,68 832,108 750,108 750,68 662,68 662,112 588,112 588,68 502,68 502,112 438,112" stroke="#ea580c" strokeWidth="1" opacity=".18"/>
+          <polyline points="900,68 832,68 832,108 750,108 750,68 662,68 662,112 588,112 588,68 502,68 502,112 438,112" className="hero-fp" stroke="#fb923c" strokeWidth="2" opacity=".45" style={{ animationDelay: "1.2s", animationDuration: "3s" }}/>
+          <polyline points="900,205 842,205 842,248 766,248 766,205 688,205" stroke="#ea580c" strokeWidth="0.8" opacity=".14"/>
+          <polyline points="900,205 842,205 842,248 766,248 766,205 688,205" className="hero-fp3" stroke="#fdba74" strokeWidth="1.8" opacity=".4" style={{ animationDelay: ".4s" }}/>
+        </g>
+        {/* Animated purple flow */}
+        <g filter="url(#gp)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="148,480 148,412 208,412 208,358 278,358 278,412 358,412 358,458" stroke="#7c3aed" strokeWidth="0.8" opacity=".15"/>
+          <polyline points="148,480 148,412 208,412 208,358 278,358 278,412 358,412 358,458" className="hero-fp2" stroke="#a78bfa" strokeWidth="1.8" opacity=".4" style={{ animationDelay: "1.8s", animationDuration: "3.5s" }}/>
+          <polyline points="900,375 822,375 822,338 742,338 742,375 678,375 678,418 608,418 608,458" stroke="#7c3aed" strokeWidth="0.8" opacity=".15"/>
+          <polyline points="900,375 822,375 822,338 742,338 742,375 678,375 678,418 608,418 608,458" className="hero-fp" stroke="#c4b5fd" strokeWidth="1.8" opacity=".38" style={{ animationDelay: "2.2s", animationDuration: "2.8s" }}/>
+          <polyline points="420,0 420,52 462,52 462,92 502,92 502,52 542,52 542,0" stroke="#7c3aed" strokeWidth="0.8" opacity=".14"/>
+          <polyline points="420,0 420,52 462,52 462,92 502,92 502,52 542,52 542,0" className="hero-fp3" stroke="#a78bfa" strokeWidth="1.8" opacity=".38" style={{ animationDelay: ".6s" }}/>
+        </g>
+        {/* Cyan nodes */}
+        <g filter="url(#gc)">
+          <circle cx="60"  cy="85"  r="3"   fill="#06b6d4" className="hero-nd"/>
+          <circle cx="145" cy="125" r="3"   fill="#22d3ee" className="hero-nd2" style={{ animationDelay: ".3s" }}/>
+          <circle cx="235" cy="85"  r="3"   fill="#06b6d4" className="hero-nd"  style={{ animationDelay: ".7s" }}/>
+          <circle cx="82"  cy="210" r="2.5" fill="#22d3ee" className="hero-nd2" style={{ animationDelay: "1s" }}/>
+          <circle cx="178" cy="168" r="2.5" fill="#67e8f9" className="hero-nd3" style={{ animationDelay: ".2s" }}/>
+          <circle cx="462" cy="52"  r="2.5" fill="#06b6d4" className="hero-nd2" style={{ animationDelay: "1.5s" }}/>
+          <circle cx="502" cy="92"  r="3"   fill="#22d3ee" className="hero-nd"  style={{ animationDelay: ".9s" }}/>
+        </g>
+        {/* Orange nodes */}
+        <g filter="url(#go)">
+          <circle cx="832" cy="68"  r="3"   fill="#f97316" className="hero-nd2" style={{ animationDelay: ".5s" }}/>
+          <circle cx="750" cy="108" r="3"   fill="#fb923c" className="hero-nd"  style={{ animationDelay: "1.1s" }}/>
+          <circle cx="662" cy="68"  r="2.5" fill="#fed7aa" className="hero-nd3" style={{ animationDelay: ".8s" }}/>
+          <circle cx="588" cy="112" r="2.5" fill="#f97316" className="hero-nd2" style={{ animationDelay: "1.4s" }}/>
+          <circle cx="502" cy="68"  r="2.5" fill="#f97316" className="hero-nd"  style={{ animationDelay: ".3s" }}/>
+          <circle cx="842" cy="248" r="2.5" fill="#fb923c" className="hero-nd3" style={{ animationDelay: "1.7s" }}/>
+        </g>
+        {/* Purple nodes */}
+        <g filter="url(#gp)">
+          <circle cx="208" cy="412" r="2.5" fill="#8b5cf6" className="hero-nd2" style={{ animationDelay: "1.2s" }}/>
+          <circle cx="278" cy="358" r="3"   fill="#a78bfa" className="hero-nd"  style={{ animationDelay: ".6s" }}/>
+          <circle cx="742" cy="375" r="2.5" fill="#7c3aed" className="hero-nd3" style={{ animationDelay: "2s" }}/>
+          <circle cx="678" cy="418" r="2.5" fill="#a78bfa" className="hero-nd2" style={{ animationDelay: "1.3s" }}/>
+        </g>
+        {/* Decorative chips */}
+        <g opacity=".12" fill="none" strokeWidth="0.6">
+          <rect x="54"  y="153" width="20" height="14" rx="2" stroke="#06b6d4"/>
+          <line x1="54" y1="157" x2="49" y2="157" stroke="#06b6d4"/><line x1="54" y1="162" x2="49" y2="162" stroke="#06b6d4"/>
+          <line x1="74" y1="157" x2="79" y2="157" stroke="#06b6d4"/><line x1="74" y1="162" x2="79" y2="162" stroke="#06b6d4"/>
+          <rect x="788" y="132" width="20" height="14" rx="2" stroke="#f97316"/>
+          <line x1="788" y1="136" x2="783" y2="136" stroke="#f97316"/><line x1="788" y1="141" x2="783" y2="141" stroke="#f97316"/>
+          <line x1="808" y1="136" x2="813" y2="136" stroke="#f97316"/><line x1="808" y1="141" x2="813" y2="141" stroke="#f97316"/>
+          <rect x="333" y="388" width="20" height="14" rx="2" stroke="#8b5cf6"/>
+          <line x1="333" y1="392" x2="328" y2="392" stroke="#8b5cf6"/><line x1="333" y1="397" x2="328" y2="397" stroke="#8b5cf6"/>
+          <line x1="353" y1="392" x2="358" y2="392" stroke="#8b5cf6"/><line x1="353" y1="397" x2="358" y2="397" stroke="#8b5cf6"/>
+        </g>
+      </svg>
+      </div>
+
+      {/* Hero content */}
+      <div className="relative z-10 max-w-6xl mx-auto px-8 grid lg:grid-cols-2 gap-12 items-center pt-28 pb-16 min-h-[520px]">
+
+        {/* Left: text */}
+        <motion.div initial="hidden" animate="visible" variants={stagger}>
+
+          <motion.h1
+            variants={fadeUp}
+            className="hero-main-title font-extrabold leading-tight mb-5"
+            style={{ fontFamily: "Outfit, sans-serif", fontSize: "clamp(40px, 4.5vw, 58px)", letterSpacing: "-1.5px" }}
+          >
+            <span style={{ color: "#074076" }}>Construimos<br />tecnología con<br /></span>
+            <AuroraText className="hero-aurora-brand">inteligencia artificial</AuroraText><br />
+            <span style={{ color: "#074076" }}>para empresas y<br />educación</span>
+          </motion.h1>
+
+          <motion.p variants={fadeUp} className="hero-main-subtitle text-sm mb-7 leading-relaxed" style={{ color: "#64748b" }}>
+            Software a medida, productos corporativos con IA y EdTech.<br />
+            Transformación real en Latinoamérica.
+          </motion.p>
+
+          <motion.div variants={fadeUp} className="flex flex-wrap gap-3 mb-8">
+            <button onClick={openDemo} className="hero-cta-btn hero-cta-btn-primary" data-testid="hero-contact-btn">
+              <span className="hero-cta-btn-label">Contáctanos</span>
+              <span className="hero-cta-btn-icon"><ArrowRight size={15} /></span>
+            </button>
+            <button
+              onClick={() => document.getElementById("servicios")?.scrollIntoView({ behavior: "smooth" })}
+              className="hero-cta-btn hero-cta-btn-ghost"
+              data-testid="hero-services-btn"
+            >
+              <span className="hero-cta-btn-label">Ver servicios</span>
+              <span className="hero-cta-btn-icon"><ArrowRight size={15} /></span>
+            </button>
           </motion.div>
-          {/* Hero image with animated thought bubble */}
-          <div className="hidden lg:flex justify-center items-end self-stretch">
-            <div className="w-full max-w-lg h-full flex items-end">
-              <HeroImageWithBubble />
+
+          <motion.div variants={fadeUp} className="hero-presence-row flex items-center gap-3 text-xs flex-wrap" style={{ color: "#94a3b8" }}>
+            <span className="hero-presence-label">Presencia en</span>
+            {[
+              { country: "Chile", flagSrc: "https://flagcdn.com/w40/cl.png" },
+              { country: "México", flagSrc: "https://flagcdn.com/w40/mx.png" },
+              { country: "Perú", flagSrc: "https://flagcdn.com/w40/pe.png" },
+              { country: "Argentina", flagSrc: "https://flagcdn.com/w40/ar.png" },
+            ].map((c) => (
+              <span key={c.country} className="hero-presence-country flex items-center gap-1 font-medium" style={{ color: "#475569" }}>
+                <img src={c.flagSrc} alt={`Bandera de ${c.country}`} className="w-4 h-4 rounded-sm object-cover" loading="lazy" /> {c.country}
+              </span>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        {/* Right: glass cards */}
+        <div className="hidden lg:flex flex-col gap-4 ml-auto" style={{ width: "100%", maxWidth: 340 }}>
+          {/* Card 1 — IA · brand navy */}
+          <div className="hero-glass-card" style={{ animationName: "heroFloat1", borderTop: "2px solid rgba(0,59,114,.35)", boxShadow: "0 6px 28px rgba(0,59,114,.09),0 1px 0 rgba(255,255,255,.8) inset" }}>
+            <div style={{ width: 42, height: 42, background: "rgba(0,59,114,.08)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, fontSize: 20 }}>🔬</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#003b72", marginBottom: 6 }}>Especialidad en IA</div>
+            <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.5 }}>Soluciones a medida impulsadas por inteligencia artificial</div>
+          </div>
+
+          {/* Card 2 — Corporativos · brand coral */}
+          <div className="hero-glass-card" style={{ animationName: "heroFloat2", animationDelay: ".5s", borderTop: "2px solid rgba(252,94,95,.35)", boxShadow: "0 6px 28px rgba(252,94,95,.09),0 1px 0 rgba(255,255,255,.8) inset" }}>
+            <div style={{ width: 42, height: 42, background: "rgba(252,94,95,.08)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, fontSize: 20 }}>📦</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#fc5e5f", marginBottom: 10 }}>Productos Corporativos</div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {["Botbee", "Cert", "Blog"].map((l) => (
+                <span key={l} style={{ background: "rgba(252,94,95,.07)", border: "1px solid rgba(252,94,95,.25)", color: "#fc5e5f", fontSize: 12, padding: "4px 12px", borderRadius: 10 }}>{l}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Card 3 — EdTech · brand sky */}
+          <div className="hero-glass-card" style={{ animationName: "heroFloat3", animationDelay: "1s", borderTop: "2px solid rgba(0,158,231,.35)", boxShadow: "0 6px 28px rgba(0,158,231,.09),0 1px 0 rgba(255,255,255,.8) inset" }}>
+            <div style={{ width: 42, height: 42, background: "rgba(0,158,231,.08)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, fontSize: 20 }}>🎓</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#009ee7", marginBottom: 10 }}>Productos ED Tech</div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {["ED Teach", "ED Math", "ED Master"].map((l) => (
+                <span key={l} style={{ background: "rgba(0,158,231,.07)", border: "1px solid rgba(0,158,231,.25)", color: "#009ee7", fontSize: 12, padding: "4px 12px", borderRadius: 10 }}>{l}</span>
+              ))}
             </div>
           </div>
         </div>
+
       </div>
+
     </section>
   );
 }
@@ -762,8 +280,8 @@ function NosotrosSection() {
           <p className="text-2xl lg:text-3xl text-gray-600 leading-relaxed max-w-4xl mx-auto">
             Empresa especializada en desarrollo de software a medida
           </p>
-          <p className="text-xl lg:text-3xl font-semibold gradient-text mb-3" style={{ fontFamily: "Outfit, sans-serif" }}>
-            IA Powered
+          <p className="text-xl lg:text-3xl font-semibold mb-3" style={{ fontFamily: "Outfit, sans-serif" }}>
+            <AuroraText className="hero-aurora-brand">IA Powered</AuroraText>
           </p>
           <p className="text-gray-500 text-base leading-relaxed max-w-3xl mx-auto mt-3">
             Resolvemos problemas de forma innovadora. Equipos especializados, entregas ágiles y total transparencia en cada etapa del proyecto.
@@ -807,36 +325,49 @@ function NosotrosSection() {
 
         {/* Timeline */}
         <div className="mb-8">
-          <h2 className="text-4xl lg:text-5xl font-bold text-[#003b72] text-center" style={{ fontFamily: "Outfit, sans-serif" }}>¿Cómo trabajamos?</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold text-[#003b72] text-center" style={{ fontFamily: "Outfit, sans-serif" }}>¿Cómo trabajamos?</h2>
         </div>
 
         {/* Desktop timeline */}
-        <div className="relative">
-          {/* Connector line (desktop only) */}
-          <div className="hidden lg:block absolute h-0.5 bg-gradient-to-r from-[#fc5e5f] via-[#009ee7] to-[#e8902f] top-5 z-0" style={{ left: "12.5%", right: "12.5%" }} />
+        <motion.div
+          className="relative"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={stagger}
+        >
+          {/* Animated connector line (desktop only) */}
+          <div className="hidden lg:block absolute h-0.5 timeline-line-animated top-5 z-0" style={{ left: "12.5%", right: "12.5%" }} />
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-4">
-            {PROCESO.map((step, idx) => (
-              <div key={step.num} className="flex lg:flex-col items-start lg:items-center gap-5 lg:gap-0 relative">
-                {/* Mobile vertical connector */}
-                {idx < PROCESO.length - 1 && (
-                  <div className="lg:hidden absolute left-5 w-0.5 bg-gray-200 z-0" style={{ top: "42px", height: "calc(100% + 24px)" }} />
-                )}
-                {/* Number circle */}
-                <div className="w-10 h-10 rounded-full bg-[#003b72] text-white flex items-center justify-center font-bold text-sm z-10 relative shrink-0 lg:mb-5 shadow-lg shadow-[#003b72]/20">
-                  {idx + 1}
-                </div>
-                <div className="lg:text-center pb-4 lg:pb-0 lg:px-2">
-                  <div className="flex lg:justify-center mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-[#009ee7]/10 flex items-center justify-center text-[#009ee7]">{step.icon}</div>
+            {PROCESO.map((step, idx) => {
+              const circleColors = ["#fc5e5f", "#e8902f", "#009ee7", "#003b72"];
+              const color = circleColors[idx];
+              return (
+                <motion.div key={step.num} variants={fadeUp} className="flex lg:flex-col items-start lg:items-center gap-5 lg:gap-0 relative">
+                  {/* Mobile vertical connector */}
+                  {idx < PROCESO.length - 1 && (
+                    <div className="lg:hidden absolute left-5 w-0.5 bg-gray-200 z-0" style={{ top: "42px", height: "calc(100% + 24px)" }} />
+                  )}
+                  {/* Number circle — brand color per step */}
+                  <div
+                    className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold text-sm z-10 relative shrink-0 lg:mb-5"
+                    style={{ background: color, boxShadow: `0 4px 14px ${color}40` }}
+                  >
+                    {idx + 1}
                   </div>
-                  <h4 className="font-bold text-[#003b72] mb-1 text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>{step.title}</h4>
-                  <p className="text-gray-500 text-xs leading-relaxed">{step.desc}</p>
-                </div>
-              </div>
-            ))}
+                  <div className="lg:text-center pb-4 lg:pb-0 lg:px-2">
+                    <div className="flex lg:justify-center mb-2">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${color}18`, color }}>{step.icon}</div>
+                    </div>
+                    <h4 className="font-bold text-[#003b72] mb-1 text-sm" style={{ fontFamily: "Outfit, sans-serif" }}>{step.title}</h4>
+                    <p className="text-gray-500 text-xs leading-relaxed">{step.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
 
         <div className="mt-10 text-center">
           <Link to="/equipo" className="inline-flex items-center gap-2 px-8 py-4 bg-[#003b72] text-white rounded-full font-semibold text-base hover:bg-[#002a55] transition-all hover:-translate-y-0.5 shadow-md shadow-[#003b72]/20" data-testid="equipo-link">
@@ -858,14 +389,14 @@ const SERVICIOS_CAPS = [
   { icon: <TrendingUp size={16} />, label: "Transformación Digital" },
 ];
 const SERVICE_CARDS = [
-  { icon: <BrainCircuit size={28} />, color: "#003b72", bg: "#003b7210", label: "IA", sub: "Integrada en todo" },
-  { icon: <Layers size={28} />, color: "#fc5e5f", bg: "#fc5e5f10", label: "Agile", sub: "Metodología ágil" },
-  { icon: <Plug size={28} />, color: "#e8902f", bg: "#e8902f10", label: "APIs", sub: "Integraciones" },
-  { icon: <BarChart3 size={28} />, color: "#009ee7", bg: "#009ee710", label: "Data", sub: "Analytics" },
+  { icon: <BrainCircuit size={28} />, color: "#003b72", bg: "#003b7210", label: "IA", sub: "Integrada en todo", desc: "Integramos inteligencia artificial en tus procesos para automatizar tareas y mejorar decisiones de negocio." },
+  { icon: <Layers size={28} />, color: "#fc5e5f", bg: "#fc5e5f10", label: "Agile", sub: "Metodología ágil", desc: "Metodología ágil con iteraciones rápidas, entregas frecuentes y total transparencia durante el proyecto." },
+  { icon: <Plug size={28} />, color: "#e8902f", bg: "#e8902f10", label: "APIs", sub: "Integraciones", desc: "Conectamos tus sistemas y plataformas con APIs robustas, seguras y bien documentadas." },
+  { icon: <BarChart3 size={28} />, color: "#009ee7", bg: "#009ee710", label: "Data", sub: "Analytics", desc: "Transformamos tus datos en insights accionables para impulsar la estrategia de tu negocio." },
 ];
 function ServiciosSection({ openDemo }) {
   return (
-    <section className="py-20 bg-white" id="servicios">
+    <section className="py-20 bg-white relative" id="servicios">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div className="grid lg:grid-cols-2 gap-14 items-center"
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
@@ -875,7 +406,9 @@ function ServiciosSection({ openDemo }) {
             <motion.h2 variants={fadeUp} className="text-4xl lg:text-5xl font-bold text-[#003b72] mb-3 leading-tight text-center" style={{ fontFamily: "Outfit, sans-serif" }}>
               Desarrollo de software a medida
             </motion.h2>
-            <motion.p variants={fadeUp} className="text-lg font-semibold text-[#fc5e5f] mb-4">IA Powered</motion.p>
+            <motion.p variants={fadeUp} className="text-lg font-semibold mb-4">
+              <AuroraText className="hero-aurora-brand">IA Powered</AuroraText>
+            </motion.p>
             <motion.p variants={fadeUp} className="text-gray-600 leading-relaxed mb-8">
               Nos apasiona resolver problemas de forma innovadora. Trabajamos con agilidad y equipos especializados para garantizar el avance sin contratiempos de tu proyecto tecnológico.
             </motion.p>
@@ -888,26 +421,36 @@ function ServiciosSection({ openDemo }) {
               ))}
             </motion.div>
             <motion.div variants={fadeUp}>
-              <button onClick={openDemo} className="btn-aurora inline-flex items-center gap-2 px-7 py-3.5 bg-[#003b72] text-white rounded-full font-semibold shadow-lg shadow-[#003b72]/20" data-testid="servicios-contact-btn">
-                Contáctanos <ArrowRight size={15} />
+              <button onClick={openDemo} className="inline-flex items-center gap-2 px-8 py-4 bg-[#003b72] text-white rounded-full font-semibold text-base hover:bg-[#002a55] transition-all hover:-translate-y-0.5 shadow-md shadow-[#003b72]/20" data-testid="servicios-contact-btn">
+                Contáctanos <ArrowRight size={16} />
               </button>
             </motion.div>
           </div>
-          {/* Right column — 2x2 cards */}
+          {/* Right column — 2x2 flip cards */}
           <motion.div variants={stagger} className="grid grid-cols-2 gap-4">
             {SERVICE_CARDS.map((card) => (
-              <motion.div key={card.label} variants={fadeUp}
-                className="card-lift bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all" data-testid={`service-card-${card.label.toLowerCase()}`}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: card.bg, color: card.color }}>
-                  {card.icon}
+              <motion.div key={card.label} variants={fadeUp} className="flip-card" data-testid={`service-card-${card.label.toLowerCase()}`}>
+                <div className="flip-inner">
+                  {/* Front */}
+                  <div className="flip-front shadow-sm" style={{ borderColor: card.color }}>
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: card.bg, color: card.color }}>
+                      {card.icon}
+                    </div>
+                    <h4 className="font-bold text-[#003b72] text-xl mb-1" style={{ fontFamily: "Outfit, sans-serif" }}>{card.label}</h4>
+                    <p className="text-gray-400 text-sm">{card.sub}</p>
+                  </div>
+                  {/* Back */}
+                  <div className="flip-back" style={{ background: card.color }}>
+                    <h4 className="font-bold text-lg mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>{card.label}</h4>
+                    <p className="text-sm leading-relaxed opacity-90">{card.desc}</p>
+                  </div>
                 </div>
-                <h4 className="font-bold text-[#003b72] text-xl mb-1" style={{ fontFamily: "Outfit, sans-serif" }}>{card.label}</h4>
-                <p className="text-gray-400 text-sm">{card.sub}</p>
               </motion.div>
             ))}
           </motion.div>
         </motion.div>
       </div>
+
     </section>
   );
 }
@@ -939,7 +482,17 @@ function ProductCard({ product }) {
 }
 
 function ProductosSection() {
-  const [tab, setTab] = useState("corp");
+  const location = useLocation();
+  const [tab, setTab] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("productos") === "ed" ? "ed" : "corp";
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const t = params.get("productos");
+    if (t === "ed" || t === "corp") setTab(t);
+  }, [location.search]);
   return (
     <section className="py-20 bg-gray-50" id="productos">
       <div className="max-w-7xl mx-auto px-6">
@@ -960,11 +513,6 @@ function ProductosSection() {
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" data-testid={tab === "corp" ? "corp-products-grid" : "ed-products-grid"}>
           {(tab === "corp" ? CORP_PRODUCTS : ED_PRODUCTS).map((p) => <ProductCard key={p.id} product={p} />)}
         </motion.div>
-        <div className="mt-8 text-center">
-          <a href={tab === "corp" ? "/productos" : "/estudiantes-digitales"} className="inline-flex items-center gap-2 text-[#009ee7] font-medium text-sm hover:gap-3 transition-all" data-testid="products-more-link">
-            Ver todos los productos <ArrowRight size={15} />
-          </a>
-        </div>
       </div>
     </section>
   );

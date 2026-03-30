@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown, ChevronRight, Bot, Award, PenSquare, Trophy, BookOpen, Calculator, BrainCircuit, Zap, Link2, Smartphone, BarChart3, TrendingUp } from "lucide-react";
 import { useDemo } from "@/contexts/DemoContext";
-import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
+import BrandLogo from "@/components/BrandLogo";
 import type { NavCategory } from "@/types";
 
 const PRODUCTOS_CATS: NavCategory[] = [
@@ -16,7 +16,7 @@ const PRODUCTOS_CATS: NavCategory[] = [
     ],
   },
   {
-    id: "ed-tech", label: "Nuestras ED Tech",
+    id: "ed-tech", label: "Productos ED Tech",
     viewAllLink: "/estudiantes-digitales", viewAllLabel: "Ver Estudiantes Digitales",
     products: [
       { name: "ED Master", desc: "Plataforma de entrenamiento académico con bancos de preguntas y simulaciones.", link: "/estudiantes-digitales/ed-master", color: "#FF7878", icon: <Trophy size={18} /> },
@@ -48,9 +48,8 @@ const SERVICIOS_CATS: NavCategory[] = [
 ];
 
 const NomedLogo = () => (
-  <Link to="/" className="flex items-center gap-0.5 font-bold text-2xl" data-testid="nav-logo">
-    <span style={{ background: "linear-gradient(135deg, #fc5e5f, #e8902f, #009ee7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontFamily: "Outfit, sans-serif" }}>N</span>
-    <span style={{ color: "#003b72", fontFamily: "Outfit, sans-serif" }}>omed</span>
+  <Link to="/" className="flex items-center gap-2" data-testid="nav-logo" style={{ textDecoration: "none" }}>
+    <BrandLogo className="h-8 w-auto" />
   </Link>
 );
 
@@ -58,9 +57,10 @@ interface MegaPanelProps {
   categories: NavCategory[];
   defaultCat: string;
   onClose: () => void;
+  onViewAll?: (catId: string) => void;
 }
 
-function MegaPanel({ categories, defaultCat, onClose }: MegaPanelProps) {
+function MegaPanel({ categories, defaultCat, onClose, onViewAll }: MegaPanelProps) {
   const [activeCat, setActiveCat] = useState(defaultCat);
   const current = categories.find((c) => c.id === activeCat);
   return (
@@ -79,9 +79,15 @@ function MegaPanel({ categories, defaultCat, onClose }: MegaPanelProps) {
         <div className="flex-1 p-8">
           <div className="mb-5">
             <h3 className="font-bold text-[#003b72] text-lg" style={{ fontFamily: "Outfit, sans-serif" }}>{current?.label}</h3>
-            <Link to={current?.viewAllLink || "/"} onClick={onClose} className="text-sm text-[#009ee7] hover:underline mt-0.5 block" data-testid="mega-view-all">
-              {current?.viewAllLabel} →
-            </Link>
+            {onViewAll ? (
+              <button onClick={() => onViewAll(activeCat)} className="text-sm text-[#009ee7] hover:underline mt-0.5 block" data-testid="mega-view-all">
+                {current?.viewAllLabel} →
+              </button>
+            ) : (
+              <Link to={current?.viewAllLink || "/"} onClick={onClose} className="text-sm text-[#009ee7] hover:underline mt-0.5 block" data-testid="mega-view-all">
+                {current?.viewAllLabel} →
+              </Link>
+            )}
           </div>
           <div className="grid grid-cols-3 gap-4">
             {current?.products.map((product) => (
@@ -112,6 +118,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState<"productos" | "servicios" | null>(null);
+  const [activeDesktopTab, setActiveDesktopTab] = useState<"inicio" | "nosotros" | "equipo" | "servicios" | "productos" | "proposito">("inicio");
   const location = useLocation();
   const navigate = useNavigate();
   const headerRef = useRef<HTMLElement>(null);
@@ -123,6 +130,12 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => { setMobileOpen(false); setOpenMenu(null); }, [location]);
+
+  useEffect(() => {
+    if (location.pathname === "/equipo") setActiveDesktopTab("equipo");
+    else if (location.pathname === "/responsabilidad-social") setActiveDesktopTab("proposito");
+    else if (location.pathname === "/") setActiveDesktopTab("inicio");
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!openMenu) return;
@@ -144,7 +157,10 @@ export default function Navbar() {
     }
   };
 
-  const toggle = (menu: "productos" | "servicios") => setOpenMenu((prev) => (prev === menu ? null : menu));
+  const toggle = (menu: "productos" | "servicios") => {
+    setOpenMenu((prev) => (prev === menu ? null : menu));
+    setActiveDesktopTab(menu);
+  };
 
   return (
     <header ref={headerRef} className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || openMenu ? "bg-white shadow-sm border-b border-gray-100" : "bg-white/95 border-b border-gray-100 backdrop-blur-xl"}`} data-testid="navbar">
@@ -152,22 +168,33 @@ export default function Navbar() {
         <NomedLogo />
 
         <nav className="hidden xl:flex items-center gap-0.5" data-testid="desktop-nav">
-          <Link to="/" className={`px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${location.pathname === "/" && !openMenu ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-link-inicio">Inicio</Link>
-          <button onClick={() => scrollToSection("nosotros")} className="px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap text-gray-600 hover:text-[#003b72] hover:bg-gray-50" data-testid="nav-link-nosotros">Nosotros</button>
-          <button onClick={() => toggle("servicios")} className={`px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1 ${openMenu === "servicios" ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-servicios-btn">
-            Servicios <ChevronDown size={13} className={`transition-transform duration-200 ${openMenu === "servicios" ? "rotate-180" : ""}`} />
+          <Link to="/" onClick={() => setActiveDesktopTab("inicio")} className={`nav-led-item ${activeDesktopTab === "inicio" ? "nav-led-active" : ""} relative px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${location.pathname === "/" && !openMenu ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-link-inicio">
+            <span className="nav-led-label">Inicio</span>
+            <span className="nav-led-line" />
+          </Link>
+          <button onClick={() => { setActiveDesktopTab("nosotros"); scrollToSection("nosotros"); }} className={`nav-led-item ${activeDesktopTab === "nosotros" ? "nav-led-active" : ""} relative px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap text-gray-600 hover:text-[#003b72] hover:bg-gray-50`} data-testid="nav-link-nosotros">
+            <span className="nav-led-label">Nosotros</span>
+            <span className="nav-led-line" />
           </button>
-          <Link to="/equipo" className={`px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${location.pathname === "/equipo" ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-link-equipo">Equipo</Link>
-          <button onClick={() => toggle("productos")} className={`px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1 ${openMenu === "productos" ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-products-btn">
-            Productos <ChevronDown size={13} className={`transition-transform duration-200 ${openMenu === "productos" ? "rotate-180" : ""}`} />
+          <Link to="/equipo" onClick={() => setActiveDesktopTab("equipo")} className={`nav-led-item ${activeDesktopTab === "equipo" ? "nav-led-active" : ""} relative px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${location.pathname === "/equipo" ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-link-equipo">
+            <span className="nav-led-label">Equipo</span>
+            <span className="nav-led-line" />
+          </Link>
+          <button onClick={() => toggle("servicios")} className={`nav-led-item ${activeDesktopTab === "servicios" ? "nav-led-active" : ""} relative px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1 ${openMenu === "servicios" ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-servicios-btn">
+            <span className="nav-led-label">Servicios</span> <ChevronDown size={13} className={`transition-transform duration-200 ${openMenu === "servicios" ? "rotate-180" : ""}`} />
+            <span className="nav-led-line" />
           </button>
-          <Link to="/responsabilidad-social" className={`px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${location.pathname === "/responsabilidad-social" ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-link-rsc">
-            Resp. Social
+          <button onClick={() => toggle("productos")} className={`nav-led-item ${activeDesktopTab === "productos" ? "nav-led-active" : ""} relative px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1 ${openMenu === "productos" ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-products-btn">
+            <span className="nav-led-label">Productos</span> <ChevronDown size={13} className={`transition-transform duration-200 ${openMenu === "productos" ? "rotate-180" : ""}`} />
+            <span className="nav-led-line" />
+          </button>
+          <Link to="/responsabilidad-social" onClick={() => setActiveDesktopTab("proposito")} className={`nav-led-item ${activeDesktopTab === "proposito" ? "nav-led-active" : ""} relative px-2.5 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${location.pathname === "/responsabilidad-social" ? "text-[#003b72] bg-[#003b72]/5" : "text-gray-600 hover:text-[#003b72] hover:bg-gray-50"}`} data-testid="nav-link-rsc">
+            <span className="nav-led-label">Propósito</span>
+            <span className="nav-led-line" />
           </Link>
         </nav>
 
         <div className="hidden xl:flex items-center gap-3">
-          <AnimatedThemeToggler />
           <button onClick={openDemo} className="btn-nav-aurora px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap" data-testid="nav-contact-btn">Contáctanos</button>
         </div>
         <button className="xl:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onClick={() => setMobileOpen(!mobileOpen)} data-testid="mobile-menu-btn">
@@ -176,7 +203,22 @@ export default function Navbar() {
       </div>
 
       <div className="hidden xl:block">
-        {openMenu === "productos" && <MegaPanel categories={PRODUCTOS_CATS} defaultCat="corporativos" onClose={() => setOpenMenu(null)} />}
+        {openMenu === "productos" && (
+          <MegaPanel
+            categories={PRODUCTOS_CATS}
+            defaultCat="corporativos"
+            onClose={() => setOpenMenu(null)}
+            onViewAll={(catId) => {
+              setOpenMenu(null);
+              const tab = catId === "ed-tech" ? "ed" : "corp";
+              navigate(`/?productos=${tab}`);
+              setTimeout(() => {
+                const el = document.getElementById("productos");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }, 100);
+            }}
+          />
+        )}
         {openMenu === "servicios" && <MegaPanel categories={SERVICIOS_CATS} defaultCat="desarrollo" onClose={() => setOpenMenu(null)} />}
       </div>
 
@@ -203,17 +245,14 @@ export default function Navbar() {
               <span style={{ color: p.color }}>{p.icon}</span> {p.name}
             </Link>
           ))}
-          <div className="px-4 py-1 text-xs font-semibold uppercase tracking-widest text-gray-400 mt-1">Nuestras ED Tech</div>
+          <div className="px-4 py-1 text-xs font-semibold uppercase tracking-widest text-gray-400 mt-1">Productos ED Tech</div>
           {PRODUCTOS_CATS[1].products.map((p) => (
             <Link key={p.name} to={p.link} className="px-6 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-gray-50 hover:text-[#003b72] transition-colors flex items-center gap-2">
               <span style={{ color: p.color }}>{p.icon}</span> {p.name}
             </Link>
           ))}
           <button onClick={() => scrollToSection("quiz")} className="px-4 py-3 rounded-xl text-sm font-medium text-left text-gray-700 hover:bg-gray-50 hover:text-[#003b72] transition-colors mt-1">¿Qué producto necesito?</button>
-          <div className="mt-2 px-1">
-            <AnimatedThemeToggler />
-          </div>
-          <button onClick={() => { setMobileOpen(false); openDemo(); }} className="mt-2 w-full px-5 py-3 bg-[#fc5e5f] text-white rounded-full text-sm font-semibold hover:bg-[#e04e4f] transition-colors">Contáctanos</button>
+          <button onClick={() => { setMobileOpen(false); openDemo(); }} className="btn-nav-aurora mt-2 w-full px-5 py-3 rounded-full text-sm font-semibold transition-colors">Contáctanos</button>
         </div>
       )}
     </header>
