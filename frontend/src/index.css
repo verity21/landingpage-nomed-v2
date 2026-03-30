@@ -43,6 +43,33 @@ h1, h2, h3, h4, h5, h6 {
         --chart-5: 27 87% 67%;
         --radius: 0.5rem;
     }
+
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+        --secondary: 217.2 32.6% 17.5%;
+        --secondary-foreground: 210 40% 98%;
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+        --accent: 217.2 32.6% 17.5%;
+        --accent-foreground: 210 40% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 212.7 26.8% 83.9%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+    }
 }
 
 @layer base {
@@ -84,4 +111,33 @@ h1, h2, h3, h4, h5, h6 {
         border-top-color: inherit;
         border-bottom-color: inherit;
     }
+}
+
+/* Global dark-mode inversion: swaps light/dark tones across the full page. */
+html.dark body {
+    filter: invert(1) hue-rotate(180deg);
+    background: #000;
+}
+
+/* Keep key navbar actions crisp under global inversion. */
+html.dark .theme-toggle-btn,
+html.dark .btn-nav-aurora,
+html.dark .hero-cta-btn {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+/* Revert media/assets so photos, videos and logos keep natural colors. */
+html.dark img,
+html.dark picture,
+html.dark video,
+html.dark canvas,
+html.dark svg:not(.theme-toggle-icon),
+html.dark iframe {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
 }
