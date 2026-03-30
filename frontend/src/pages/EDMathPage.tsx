@@ -32,8 +32,8 @@ export default function EDMathPage() {
           <span style={{ background: "linear-gradient(135deg, #fc5e5f, #e8902f, #009ee7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontFamily: "Outfit, sans-serif" }}>N</span>
           <span style={{ color: "#003b72", fontFamily: "Outfit, sans-serif" }}>omed</span>
         </Link>
-        <Link to="/estudiantes-digitales" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#2B7F87] transition-colors" data-testid="product-back-btn">
-          <ArrowLeft size={15} /> Volver a Estudiantes Digitales
+        <Link to="/" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#2B7F87] transition-colors" data-testid="product-back-btn">
+          <ArrowLeft size={15} /> Volver al inicio
         </Link>
       </div>
 

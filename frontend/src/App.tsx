@@ -7,7 +7,6 @@ import Footer from "@/components/Footer";
 import DemoModal from "@/components/DemoModal";
 import HomePage from "@/pages/HomePage";
 import TecnologiaPage from "@/pages/TecnologiaPage";
-import ProductosPage from "@/pages/ProductosPage";
 import EstudiantesDigitalesPage from "@/pages/EstudiantesDigitalesPage";
 import EquipoPage from "@/pages/EquipoPage";
 import BotbeePage from "@/pages/BotbeePage";
@@ -50,7 +49,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/equipo" element={<EquipoPage />} />
               <Route path="/tecnologia" element={<Navigate to="/#servicios" replace />} />
-              <Route path="/productos" element={<ProductosPage />} />
+              <Route path="/productos" element={<Navigate to="/" replace />} />
               <Route path="/productos/botbee" element={<BotbeePage />} />
               <Route path="/productos/cert" element={<CertPage />} />
               <Route path="/productos/blog-ia" element={<BlogIAPage />} />
